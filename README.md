@@ -6,6 +6,12 @@ Blog cá nhân, dựng bằng [Astro](https://astro.build/) + theme [AstroPaper]
 
 - Node.js **24** (Astro 7 không chạy trên Node 22.19). Nếu dùng nvm-windows: `nvm use 24.11.1`
 
+## Lưu ý
+
+- Repo không commit `package-lock.json`: lock sinh trên Windows thiếu optional deps Linux nên `npm ci` trên Workers Builds fail. Cloudflare sẽ chạy `npm install`.
+- `packageManager` trong package.json pin npm 11 cho Workers Builds.
+- Secret `RESEND_API_KEY` phải đặt bằng key **Full access** (key "sending only" bị Resend từ chối khi thêm contact).
+
 ## Lệnh
 
 ```bash
