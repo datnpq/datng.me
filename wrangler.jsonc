@@ -1,9 +1,20 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "datng-me",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-11-01",
+  "vars": {
+    "SITE_ORIGIN": "https://datng.me"
+  },
+  "observability": { "enabled": true },
+  "routes": [
+    { "pattern": "datng.me", "custom_domain": true },
+    { "pattern": "www.datng.me", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "404-page"
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
   }
 }

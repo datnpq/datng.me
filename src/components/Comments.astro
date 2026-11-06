@@ -1,0 +1,78 @@
+---
+/**
+ * Giscus comments (GitHub Discussions). Theme follows the site's light/dark toggle.
+ * Repo IDs come from: gh api graphql repository{id discussionCategories}
+ */
+const GISCUS = {
+  repo: "datnpq/datng.me",
+  repoId: "R_kgDOVkuKPg",
+  category: "General",
+  categoryId: "DIC_kwDOVkuKPs4DKfqM",
+};
+---
+
+<section id="comments" class="mt-10 border-t border-dashed pt-8">
+  <h2 class="mb-4 text-xl font-semibold">Bình luận</h2>
+  <p class="text-muted-foreground mb-4 text-sm">
+    Đăng nhập GitHub để bình luận. Bình luận được lưu tại GitHub Discussions của
+    blog.
+  </p>
+  <div
+    id="giscus-container"
+    data-repo={GISCUS.repo}
+    data-repo-id={GISCUS.repoId}
+    data-category={GISCUS.category}
+    data-category-id={GISCUS.categoryId}
+  >
+  </div>
+</section>
+
+<script>
+  function giscusTheme() {
+    return document.firstElementChild?.getAttribute("data-theme") === "dark"
+      ? "noborder_dark"
+      : "noborder_light";
+  }
+
+  function mountGiscus() {
+    const container = document.getElementById("giscus-container");
+    if (!container || container.querySelector("script")) return;
+    const d = container.dataset;
+    const s = document.createElement("script");
+    s.src = "https://giscus.app/client.js";
+    s.async = true;
+    s.crossOrigin = "anonymous";
+    Object.entries({
+      "data-repo": d.repo,
+      "data-repo-id": d.repoId,
+      "data-category": d.category,
+      "data-category-id": d.categoryId,
+      "data-mapping": "pathname",
+      "data-strict": "1",
+      "data-reactions-enabled": "1",
+      "data-emit-metadata": "0",
+      "data-input-position": "top",
+      "data-theme": giscusTheme(),
+      "data-lang": "vi",
+      "data-loading": "lazy",
+    }).forEach(([k, v]) => v && s.setAttribute(k, v));
+    container.appendChild(s);
+  }
+
+  function syncGiscusTheme() {
+    const iframe = document.querySelector<HTMLIFrameElement>(
+      "iframe.giscus-frame"
+    );
+    iframe?.contentWindow?.postMessage(
+      { giscus: { setConfig: { theme: giscusTheme() } } },
+      "https://giscus.app"
+    );
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    mountGiscus();
+    document
+      .querySelector("#theme-btn")
+      ?.addEventListener("click", () => setTimeout(syncGiscusTheme, 50));
+  });
+</script>
