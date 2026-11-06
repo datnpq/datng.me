@@ -1,0 +1,209 @@
+---
+import { getCollection } from "astro:content";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import IconRss from "@/assets/icons/IconRss.svg";
+import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Socials from "@/components/Socials.astro";
+import Card from "@/components/Card.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import { getSortedPosts } from "@/utils/getSortedPosts";
+import { useTranslations } from "@/i18n";
+import config from "@/config";
+
+const { socials, posts: postsConfig } = config;
+
+const locale = Astro.currentLocale ?? config.site.lang;
+const t = useTranslations(locale);
+
+const posts = await getCollection("posts");
+const sortedPosts = getSortedPosts(posts);
+const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
+const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
+const homePath = getRelativeLocaleUrl(locale, "");
+---
+
+<Layout>
+  <Header />
+  <main
+    id="main-content"
+    data-layout="index"
+    data-home-path={homePath}
+    class="app-layout my-1"
+  >
+    <section
+      id="hero"
+      class="border-border flex flex-col items-center gap-6 border-b pt-10 pb-14 sm:items-start sm:pt-14 sm:pb-20"
+    >
+      <!-- Terminal prompt badge -->
+      <div
+        class="border-border/40 bg-muted/20 rise inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs sm:text-sm"
+      >
+        <span class="relative flex h-2 w-2">
+          <span
+            class="bg-accent absolute inline-flex h-full w-full animate-ping rounded-full opacity-60"
+          ></span>
+          <span class="bg-accent relative inline-flex h-2 w-2 rounded-full"
+          ></span>
+        </span>
+        <span class="text-accent">~</span>/<span
+          id="typewriter"
+          class="text-accent"
+          data-words="coding|learning|self-hosting|vibing">coding</span
+        ><span class="cursor-blink text-accent">▍</span>
+      </div>
+
+      <div
+        class="rise flex flex-col items-center gap-4 sm:flex-row"
+        style="--delay: 120ms"
+      >
+        <a
+          href={getRelativeLocaleUrl(locale, "about")}
+          class="group avatar-ring mx-auto block sm:mx-0"
+        >
+          <picture>
+            <source
+              type="image/webp"
+              srcset={`${import.meta.env.BASE_URL.replace(/\/?$/, "/")}avatar.webp`}
+            />
+            <img
+              src={`${import.meta.env.BASE_URL.replace(/\/?$/, "/")}avatar.jpg`}
+              alt={config.site.author}
+              width="160"
+              height="160"
+              class="avatar-float h-40 w-40 flex-shrink-0 rounded-full object-cover transition-all duration-300 group-hover:scale-105 group-hover:rotate-3"
+              fetchpriority="high"
+              loading="eager"
+            />
+          </picture>
+        </a>
+        <div class="flex-1 text-center sm:text-left">
+          <h1
+            class="rise my-2 inline-block text-2xl font-bold sm:my-4 sm:text-3xl"
+            style="--delay: 240ms"
+          >
+            Xin chào, mình là <span class="hero-name">{config.site.author}</span
+            >
+          </h1>{" "}
+          <a
+            target="_blank"
+            href={`${import.meta.env.BASE_URL.replace(/\/?$/, "/")}rss.xml`}
+            class="ml-2 inline-block"
+            aria-label="RSS Feed"
+            title="RSS Feed"
+          >
+            <IconRss
+              width={20}
+              height={20}
+              class="stroke-accent scale-125 stroke-3 rtl:-rotate-90"
+            />
+            <span class="sr-only">RSS Feed</span>
+          </a>
+
+          <p class="text-muted-foreground rise" style="--delay: 360ms">
+            Lập trình viên, thích vọc vạch self-hosting và AI. Blog này là nơi
+            mình ghi lại những gì học được: web development, hạ tầng, công cụ,
+            và vài thứ linh tinh khác.
+          </p>
+
+          {
+            socials.length > 0 && (
+              <div
+                class="rise mt-6 flex items-center max-sm:flex-col sm:items-start"
+                style="--delay: 480ms"
+              >
+                <Socials />
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </section>
+
+    {
+      featuredPosts.length > 0 && (
+        <section
+          id="featured"
+          class:list={[
+            "pt-12 pb-6",
+            { "border-border border-b": recentPosts.length > 0 },
+          ]}
+        >
+          <h2 class="text-2xl font-semibold tracking-wide">
+            {t.home.featured}
+          </h2>
+          <ul>
+            {featuredPosts.map(data => (
+              <Card variant="h3" {...data} />
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      recentPosts.length > 0 && (
+        <section id="recent-posts" class="pt-12 pb-6">
+          <h2 class="text-2xl font-semibold tracking-wide">
+            {t.home.recentPosts}
+          </h2>
+          <ul>
+            {recentPosts.slice(0, postsConfig.perIndex).map(data => (
+              <Card variant="h3" {...data} />
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <div class="my-8 text-center">
+      <LinkButton href={getRelativeLocaleUrl(locale, "posts")}>
+        {t.home.allPosts}
+        <IconArrowRight class="inline-block rtl:-rotate-180" />
+      </LinkButton>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  function startTypewriter() {
+    const el = document.getElementById("typewriter");
+    if (!el || el.dataset.running) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    el.dataset.running = "1";
+    const words = (el.dataset.words ?? "").split("|").filter(Boolean);
+    let w = 0,
+      i = words[0]?.length ?? 0,
+      deleting = true; // first word is pre-rendered; start by erasing it
+    const tick = () => {
+      if (!document.body.contains(el)) return;
+      const word = words[w];
+      i += deleting ? -1 : 1;
+      el.textContent = word.slice(0, i);
+      let delay = deleting ? 45 : 90;
+      if (!deleting && i === word.length) {
+        delay = 1600;
+        deleting = true;
+      } else if (deleting && i === 0) {
+        deleting = false;
+        w = (w + 1) % words.length;
+        delay = 300;
+      }
+      setTimeout(tick, delay);
+    };
+    setTimeout(tick, 1400);
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    startTypewriter();
+    const indexLayout = (document.querySelector("#main-content") as HTMLElement)
+      ?.dataset;
+    const baseRoot = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+    if (indexLayout?.layout) {
+      sessionStorage.setItem("backUrl", indexLayout.homePath ?? baseRoot);
+    }
+  });
+</script>
