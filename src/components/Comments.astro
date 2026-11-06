@@ -3,6 +3,20 @@
  * Giscus comments (GitHub Discussions). Theme follows the site's light/dark toggle.
  * Repo IDs come from: gh api graphql repository{id discussionCategories}
  */
+type Props = {
+  /** "pathname" (default) maps a discussion per page; "specific" uses `term`. */
+  mapping?: "pathname" | "specific";
+  term?: string;
+  title?: string;
+  intro?: string;
+};
+const {
+  mapping = "pathname",
+  term,
+  title = "Bình luận",
+  intro = "Đăng nhập GitHub để bình luận. Bình luận được lưu tại GitHub Discussions của blog.",
+} = Astro.props;
+
 const GISCUS = {
   repo: "datnpq/datng.me",
   repoId: "R_kgDOVkuKPg",
@@ -12,17 +26,16 @@ const GISCUS = {
 ---
 
 <section id="comments" class="mt-10 border-t border-dashed pt-8">
-  <h2 class="mb-4 text-xl font-semibold">Bình luận</h2>
-  <p class="text-muted-foreground mb-4 text-sm">
-    Đăng nhập GitHub để bình luận. Bình luận được lưu tại GitHub Discussions của
-    blog.
-  </p>
+  <h2 class="mb-4 text-xl font-semibold">{title}</h2>
+  <p class="text-muted-foreground mb-4 text-sm">{intro}</p>
   <div
     id="giscus-container"
     data-repo={GISCUS.repo}
     data-repo-id={GISCUS.repoId}
     data-category={GISCUS.category}
     data-category-id={GISCUS.categoryId}
+    data-mapping={mapping}
+    data-term={term}
   >
   </div>
 </section>
@@ -47,7 +60,8 @@ const GISCUS = {
       "data-repo-id": d.repoId,
       "data-category": d.category,
       "data-category-id": d.categoryId,
-      "data-mapping": "pathname",
+      "data-mapping": d.mapping ?? "pathname",
+      "data-term": d.term,
       "data-strict": "1",
       "data-reactions-enabled": "1",
       "data-emit-metadata": "0",

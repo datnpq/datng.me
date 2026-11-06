@@ -10,6 +10,7 @@ import Socials from "@/components/Socials.astro";
 import Card from "@/components/Card.astro";
 import LinkButton from "@/components/LinkButton.astro";
 import Newsletter from "@/components/Newsletter.astro";
+import StatusLine from "@/components/StatusLine.astro";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
@@ -34,12 +35,19 @@ const homePath = getRelativeLocaleUrl(locale, "");
     data-home-path={homePath}
     class="app-layout my-1"
   >
+    <div class="retro-marquee" aria-hidden="true">
+      <span
+        >★ Chào mừng bạn đến với blog của Đạt ★ Nơi Cảm Xúc Thăng Hoa ★ Nhớ để
+        lại lưu bút nha ★</span
+      >
+    </div>
     <section
       id="hero"
       class="border-border flex flex-col items-center gap-6 border-b pt-10 pb-14 sm:items-start sm:pt-14 sm:pb-20"
     >
       <!-- Terminal prompt badge -->
       <div
+        id="hero-badge"
         class="border-border/40 bg-muted/20 rise inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs sm:text-sm"
       >
         <span class="relative flex h-2 w-2">
@@ -108,6 +116,8 @@ const homePath = getRelativeLocaleUrl(locale, "");
             mình ghi lại những gì học được: web development, hạ tầng, công cụ,
             và vài thứ linh tinh khác.
           </p>
+
+          <StatusLine />
 
           {
             socials.length > 0 && (

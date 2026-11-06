@@ -1,0 +1,43 @@
+---
+import { getEntry, render } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+import Comments from "@/components/Comments.astro";
+
+const page = await getEntry("pages", "guestbook");
+
+if (!page) {
+  throw new Error(
+    "Missing content entry: `guestbook.md` in `src/content/pages/`"
+  );
+}
+
+const { Content } = await render(page);
+---
+
+<Layout
+  title={`${page.data.title} | ${config.site.title}`}
+  description={page.data.description}
+  ogImage={page.data.ogImage}
+  canonicalURL={page.data.canonicalURL}
+>
+  <Header />
+
+  <Breadcrumb />
+
+  <Main pageTitle={page.data.title} class="app-prose">
+    <Content />
+    <Comments
+      mapping="specific"
+      term="guestbook"
+      title="Sổ lưu bút"
+      intro="Đăng nhập GitHub rồi viết vài dòng. Mọi lưu bút nằm trong một thread chung."
+    />
+  </Main>
+
+  <Footer />
+</Layout>

@@ -6,6 +6,7 @@ import Breadcrumb from "@/components/Breadcrumb.astro";
 import Main from "@/components/Main.astro";
 import Footer from "@/components/Footer.astro";
 import config from "@/config";
+import SongOfWeek from "@/components/SongOfWeek.astro";
 
 const page = await getEntry("pages", "now");
 
@@ -28,6 +29,7 @@ const { Content } = await render(page);
 
   <Main pageTitle={page.data.title} class="app-prose">
     <Content />
+    <SongOfWeek />
   </Main>
 
   <Footer />

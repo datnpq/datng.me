@@ -9,6 +9,12 @@ import { postFilter } from "@/utils/postFilter";
 import config from "@/config";
 import { ogTemplate } from "@/utils/ogTemplate";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import { resolveTimezone } from "@/utils/resolveTimezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export async function getStaticPaths() {
   if (!config.features.dynamicOgImage) {
@@ -51,7 +57,9 @@ export const GET: APIRoute = async ({ props, url }) => {
     ogTemplate({
       title: props.data.title,
       subtitle: props.data.description,
-      meta: dayjs(props.data.pubDatetime).format("DD/MM/YYYY"),
+      meta: dayjs(props.data.pubDatetime)
+        .tz(resolveTimezone(props.data.timezone ?? config.site.timezone))
+        .format("DD/MM/YYYY"),
     }),
     {
       width: 1200,

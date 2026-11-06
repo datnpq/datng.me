@@ -36,6 +36,13 @@ const pages = defineCollection({
     description: z.string().optional(),
     ogImage: z.string().optional(),
     canonicalURL: z.string().optional(),
+    /** "Blast" one-liner shown on the home hero (Yahoo! 360 style). */
+    blast: z.string().optional(),
+    /** Current mood, e.g. "😊 vui" */
+    mood: z.string().optional(),
+    /** Song of the week: YouTube video id or full URL */
+    song: z.string().optional(),
+    songTitle: z.string().optional(),
   }),
 });
 

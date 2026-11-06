@@ -1,6 +1,8 @@
 const THEME_KEY = "theme";
 const LIGHT = "light";
 const DARK = "dark";
+const RETRO = "retro"; // Yahoo! 360 vibe
+const ORDER = [LIGHT, DARK, RETRO];
 
 function getPreferredTheme(): string {
   const stored = localStorage.getItem(THEME_KEY);
@@ -24,6 +26,7 @@ function reflect(): void {
   const root = document.firstElementChild;
   root?.setAttribute("data-theme", themeValue);
   root?.classList.toggle("dark", themeValue === DARK);
+  root?.classList.toggle("retro", themeValue === RETRO);
   document.querySelector("#theme-btn")?.setAttribute("aria-label", themeValue);
 
   // Fill <meta name="theme-color"> with the computed background colour so
@@ -37,7 +40,7 @@ function reflect(): void {
 function setup(): void {
   reflect();
   document.querySelector("#theme-btn")?.addEventListener("click", () => {
-    themeValue = themeValue === LIGHT ? DARK : LIGHT;
+    themeValue = ORDER[(ORDER.indexOf(themeValue) + 1) % ORDER.length];
     persist();
   });
 }
@@ -64,6 +67,7 @@ document.addEventListener("astro:before-swap", event => {
 window
   .matchMedia("(prefers-color-scheme: dark)")
   .addEventListener("change", ({ matches }) => {
+    if (themeValue === RETRO) return; // retro is a deliberate choice
     themeValue = matches ? DARK : LIGHT;
     persist();
   });

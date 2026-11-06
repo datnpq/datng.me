@@ -1,0 +1,32 @@
+---
+/** Blast + mood from src/content/pages/now.md (Yahoo! 360 style), shown on the hero. */
+import { getEntry } from "astro:content";
+const now = await getEntry("pages", "now");
+const blast = now?.data.blast;
+const mood = now?.data.mood;
+---
+
+{
+  (blast || mood) && (
+    <div class="status-line mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+      {blast && (
+        <a
+          href="/now/"
+          class="hover:text-accent group inline-flex items-center gap-1.5"
+          title="Xem trang /now"
+        >
+          <span class="text-accent">💬</span>
+          <span class="decoration-dashed underline-offset-4 group-hover:underline">
+            {blast}
+          </span>
+        </a>
+      )}
+      {mood && (
+        <span class="text-muted-foreground inline-flex items-center gap-1.5">
+          <span>Mood:</span>
+          <span class="text-foreground">{mood}</span>
+        </span>
+      )}
+    </div>
+  )
+}

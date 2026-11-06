@@ -56,6 +56,16 @@ Tuỳ chọn: thêm `RESEND_SEGMENT_ID` vào `vars` trong `wrangler.jsonc` để
 
 Repo `datnpq/datng.me` đã bật Discussions. Cần cài app https://github.com/apps/giscus cho repo này một lần. ID repo/category nằm trong `src/components/Comments.astro`.
 
+## Theme
+
+Nút đổi giao diện xoay vòng Sáng → Tối → **Retro 360** (tím Yahoo, Tahoma, bevel, marquee). CSS retro nằm cuối `src/styles/global.css`, biến màu trong `src/styles/theme.css`.
+
+## Blast, Mood, bài hát tuần, lưu bút
+
+- `src/content/pages/now.md` frontmatter: `blast`, `mood` hiện ở hero trang chủ; `song` (link YouTube) + `songTitle` hiện ở trang /now.
+- `/guestbook/` là một thread Giscus chung (mapping `specific`, term `guestbook`).
+- Cloudflare Web Analytics bật cho datng.me theo kiểu automatic setup (không cần script trong code).
+
 ## Viết bài bằng giao diện web (Sveltia CMS)
 
 Mở https://datng.me/admin/ → "Sign In with Token" → tạo GitHub personal access token (Contents: Read and write cho repo `datnpq/datng.me`) → dán vào. Lưu bài = commit lên `main` = tự deploy.

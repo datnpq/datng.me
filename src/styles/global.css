@@ -210,3 +210,203 @@
     transform: none;
   }
 }
+
+/* ---------- Theme icons on the toggle button ---------- */
+.theme-icon-light,
+.theme-icon-dark,
+.theme-icon-retro {
+  scale: 0;
+  rotate: 90deg;
+}
+:root:not(.dark):not(.retro) .theme-icon-light,
+.dark .theme-icon-dark,
+.retro .theme-icon-retro {
+  scale: 1;
+  rotate: 0deg;
+}
+
+/* ---------- Retro 360 theme ---------- */
+.retro body {
+  font-family: Tahoma, Verdana, "Segoe UI", sans-serif;
+  font-size: 14px;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(rgba(123, 0, 153, 0.08) 1px, transparent 1px),
+    radial-gradient(rgba(123, 0, 153, 0.08) 1px, transparent 1px);
+  background-size: 18px 18px;
+  background-position:
+    0 0,
+    9px 9px;
+}
+.retro .app-layout {
+  max-width: 56rem;
+}
+.retro header .app-layout > div,
+.retro header > div {
+  background: linear-gradient(180deg, #8e2bb5 0%, #7b0099 100%);
+  color: #fff;
+  border-radius: 6px 6px 0 0;
+  border: 2px solid #4a0060;
+  border-bottom: 0;
+  padding-inline: 1rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.retro header a,
+.retro header button,
+.retro #menu-items > li > a {
+  color: #fff !important;
+}
+.retro #menu-items > li > a:hover,
+.retro header .active-nav {
+  color: #ffe66d !important;
+  text-decoration-color: #ffe66d;
+}
+.retro #menu-items > li > a:not(.active-nav)::after {
+  background: #ffe66d;
+}
+.retro #main-content,
+.retro footer > div {
+  background: #fff;
+  border: 2px solid #4a0060;
+  border-top: 0;
+  padding: 1rem 1.25rem 1.5rem;
+  box-shadow: 4px 4px 0 #b89bd6;
+}
+.retro footer > div {
+  border-top: 1px dotted var(--border);
+  margin-top: 0;
+  border-radius: 0 0 6px 6px;
+}
+.retro main {
+  margin-top: 0 !important;
+}
+.retro h1,
+.retro h2,
+.retro h3 {
+  font-family: "Trebuchet MS", Tahoma, Verdana, sans-serif;
+  letter-spacing: 0;
+}
+.retro #hero {
+  background: #faf6ff;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.25rem !important;
+  margin-top: 1rem;
+  box-shadow: inset 0 0 0 3px #fff;
+}
+.retro .avatar-ring::before {
+  display: none;
+}
+.retro .avatar-float {
+  animation: none;
+  border-radius: 4px !important;
+  border: 3px solid #fff;
+  outline: 1px solid var(--border);
+}
+.retro .hero-name {
+  background: none;
+  color: var(--accent);
+  animation: none;
+}
+.retro #hero-badge {
+  display: none; /* terminal badge doesn't fit 2008 */
+}
+.retro .status-line {
+  display: flex !important;
+}
+.retro #main-content li.my-6 {
+  border: 1px dotted var(--border);
+  background: #fff;
+  margin-inline: 0;
+}
+.retro #main-content li.my-6:hover {
+  background: #faf6ff;
+  box-shadow: 3px 3px 0 #e2d6f2;
+  transform: none;
+}
+.retro #main-content li.my-6 h3,
+.retro #main-content li.my-6 h2 {
+  text-decoration: underline;
+}
+.retro section h2.tracking-wide {
+  background: linear-gradient(180deg, #ede4f8, #e2d6f2);
+  border-left: 6px solid var(--accent);
+  padding: 0.25rem 0.75rem;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+}
+.retro .app-prose {
+  font-family: Tahoma, Verdana, sans-serif;
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+.retro .app-prose a {
+  color: #0000ee;
+  text-decoration: underline;
+}
+.retro .app-prose a:visited {
+  color: #551a8b;
+}
+.retro [data-view-counter] [data-views] {
+  font-family: "Courier New", monospace;
+  background: #000;
+  color: #7cfc00;
+  padding: 0 4px;
+  border: 1px inset #666;
+  letter-spacing: 1px;
+}
+.retro #newsletter {
+  background: #faf6ff;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+.retro #newsletter button,
+.retro .bg-accent {
+  background: linear-gradient(180deg, #a04cc0, #7b0099) !important;
+  border: 1px solid #4a0060;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.retro #comments h2::before {
+  content: "✎ ";
+}
+.retro #comments h2 {
+  background: linear-gradient(180deg, #ede4f8, #e2d6f2);
+  border-left: 6px solid var(--accent);
+  padding: 0.25rem 0.75rem;
+  font-size: 1.05rem;
+}
+.retro .retro-marquee {
+  display: block;
+}
+.retro .cursor-blink {
+  display: none;
+}
+
+/* welcome marquee: only visible in retro */
+.retro-marquee {
+  display: none;
+  overflow: hidden;
+  white-space: nowrap;
+  background: #fff8c2;
+  border: 1px solid #e3d26f;
+  color: #7b0099;
+  font-size: 12px;
+  padding: 2px 0;
+}
+.retro-marquee > span {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 18s linear infinite;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .retro-marquee > span {
+    animation: none;
+    padding-left: 0.5rem;
+  }
+}
