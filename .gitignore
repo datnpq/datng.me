@@ -39,3 +39,6 @@ public/pagefind/
 # local secret files
 *.key
 .dev.vars
+
+# lockfile omitted: npm on Windows cannot record Linux-only optional deps that Workers Builds needs
+package-lock.json
