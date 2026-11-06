@@ -35,3 +35,7 @@ compose.override.yaml
 # build artifacts
 public/pagefind/
 .wrangler/
+
+# local secret files
+*.key
+.dev.vars
