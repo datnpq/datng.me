@@ -1,6 +1,6 @@
 ---
 title: "Từ teenstyle9x.info đến datng.me: 18 năm mày mò làm web"
-pubDatetime: 2026-11-07T09:00:00+07:00
+pubDatetime: 2026-11-06T17:00:00+07:00
 featured: true
 draft: false
 tags:
