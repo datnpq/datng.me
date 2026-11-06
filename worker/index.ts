@@ -2,6 +2,7 @@
  * datng.me edge worker.
  * - POST /api/subscribe  → add contact to Resend (newsletter)
  * - GET/POST /api/views/<slug> → read / increment a post's view counter (KV)
+ * - GET/POST /api/visits → site-wide visitor counter (KV)
  * - everything else      → static assets (Astro build in ./dist)
  */
 export interface Env {
@@ -76,6 +77,17 @@ async function subscribe(request: Request, env: Env): Promise<Response> {
   return json({ ok: false, error: "upstream" }, 502);
 }
 
+function sameSite(request: Request, env: Env): boolean {
+  const origin = request.headers.get("origin") ?? "";
+  let host = "";
+  try {
+    host = new URL(origin).hostname;
+  } catch {
+    /* no origin header (e.g. same-origin GET) */
+  }
+  return [new URL(env.SITE_ORIGIN).hostname, "www.datng.me", "localhost", "127.0.0.1"].includes(host);
+}
+
 const SLUG_RE = /^[a-z0-9-]{1,120}$/;
 
 async function views(request: Request, env: Env, slug: string): Promise<Response> {
@@ -101,11 +113,24 @@ async function views(request: Request, env: Env, slug: string): Promise<Response
   return json({ ok: true, views: next }, 200, headers);
 }
 
+async function visits(request: Request, env: Env): Promise<Response> {
+  const key = "visits:total";
+  const current = Number((await env.VIEWS.get(key)) ?? "0");
+  const headers = { "cache-control": "no-store" };
+  if (request.method === "GET") return json({ ok: true, visits: current }, 200, headers);
+  if (request.method !== "POST") return json({ ok: false, error: "method" }, 405);
+  if (!sameSite(request, env)) return json({ ok: false, error: "forbidden" }, 403);
+  const next = current + 1;
+  await env.VIEWS.put(key, String(next));
+  return json({ ok: true, visits: next }, 200, headers);
+}
+
 export default {
   async fetch(request, env): Promise<Response> {
     const url = new URL(request.url);
     const viewsMatch = url.pathname.match(/^\/api\/views\/([^/]+)\/?$/);
     if (viewsMatch) return views(request, env, decodeURIComponent(viewsMatch[1]));
+    if (url.pathname === "/api/visits") return visits(request, env);
     if (url.pathname === "/api/subscribe") {
       if (request.method !== "POST") return json({ ok: false, error: "method" }, 405);
       return subscribe(request, env);

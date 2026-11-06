@@ -66,6 +66,14 @@ Nút đổi giao diện xoay vòng Sáng → Tối → **Retro 360** (layout Yah
 - `/guestbook/` là một thread Giscus chung (mapping `specific`, term `guestbook`).
 - Cloudflare Web Analytics: beacon chèn trong `src/layouts/Layout.astro` (token công khai), xem số liệu ở Dashboard → Web analytics → datng.me.
 
+## Friends, Y!M status, skin, lượt ghé, Entry
+
+- `src/data/friends.ts` — danh sách blog bạn bè (Friends box trang chủ).
+- Trạng thái Y!M "Online/Idle" tính theo giờ Việt Nam (8h–23h là Online), chỉ để vui.
+- Theme Retro có 3 skin Đen/Hồng/Xanh, chọn ở profile trang chủ, lưu localStorage `skin`.
+- Footer: "Bạn là vị khách thứ 000123" qua `GET|POST /api/visits` (KV key `visits:total`), mỗi phiên trình duyệt tính một lần.
+- Mỗi bài có "Entry #N" theo thứ tự đăng.
+
 ## Máy nghe nhạc
 
 Nút "🎄 Nhạc Giáng sinh" góc dưới phải (skin Winamp ở theme Retro). Phát qua YouTube IFrame API, nhạc tiếp tục khi chuyển trang, nhớ bài và trạng thái. Đổi playlist trong `src/data/playlist.ts` (chỉ cần YouTube video id). Trình duyệt chặn tự phát, nên người xem phải bấm Play một lần.

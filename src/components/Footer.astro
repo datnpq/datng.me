@@ -2,6 +2,7 @@
 import type { HTMLAttributes } from "astro/types";
 import Socials from "./Socials.astro";
 import { useTranslations } from "@/i18n";
+import VisitorCounter from "./VisitorCounter.astro";
 
 type Props = {
   noMarginTop?: boolean;
@@ -43,7 +44,10 @@ const currentYear = new Date().getFullYear();
         >RSS</a
       >
     </nav>
-    <div class="my-2 flex flex-col items-center whitespace-nowrap sm:flex-row">
+    <div
+      class="my-2 flex flex-col items-center gap-1 whitespace-nowrap sm:flex-row sm:gap-3"
+    >
+      <VisitorCounter />
       <span>{t.footer.copyright} &#169; {currentYear}</span>
       <span class="hidden sm:inline">&nbsp;|&nbsp;</span>
       <span>{t.footer.allRightsReserved}</span>

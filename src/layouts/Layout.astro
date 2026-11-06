@@ -108,6 +108,10 @@ const rssHref = getAssetPath("rss.xml");
         root?.setAttribute("data-theme", theme);
         root?.classList.toggle("dark", theme === "dark");
         root?.classList.toggle("retro", theme === "retro");
+        root?.setAttribute(
+          "data-skin",
+          localStorage.getItem("skin") ?? "black"
+        );
         // Expose value so theme.ts can skip re-detection.
         window.__theme = { value: theme };
       })();

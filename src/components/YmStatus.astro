@@ -1,0 +1,35 @@
+---
+/**
+ * Yahoo! Messenger-style presence: "Online" during Vietnam daytime,
+ * "Idle" late at night. Pure fun, computed client-side in Asia/Ho_Chi_Minh.
+ */
+---
+
+<span class="ym-status inline-flex items-center gap-1.5 text-sm" data-ym>
+  <span class="ym-dot" aria-hidden="true"></span>
+  <span data-ym-text>…</span>
+</span>
+
+<script>
+  function ymUpdate() {
+    const hour = Number(
+      new Intl.DateTimeFormat("en-US", {
+        hour: "numeric",
+        hour12: false,
+        timeZone: "Asia/Ho_Chi_Minh",
+      }).format(new Date())
+    );
+    const online = hour >= 8 && hour < 23;
+    document.querySelectorAll<HTMLElement>("[data-ym]").forEach(el => {
+      el.classList.toggle("online", online);
+      el.classList.toggle("idle", !online);
+      const t = el.querySelector("[data-ym-text]");
+      if (t)
+        t.textContent = online
+          ? "Online (Y!M: datnpq)"
+          : "Idle — chắc đang ngủ 😴";
+    });
+  }
+  document.addEventListener("astro:page-load", ymUpdate);
+  ymUpdate();
+</script>

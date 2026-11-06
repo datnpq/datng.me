@@ -1,0 +1,49 @@
+---
+/** Retro-only skin switcher (Yahoo! 360 had themes): black / pink / blue. Stored in localStorage "skin". */
+const SKINS = [
+  { id: "black", label: "Đen", color: "#000" },
+  { id: "pink", label: "Hồng", color: "#ff69b4" },
+  { id: "blue", label: "Xanh", color: "#1e90ff" },
+];
+---
+
+<div class="skin-picker hidden items-center gap-1.5 text-sm" data-skin-picker>
+  <span class="text-muted-foreground">Skin:</span>
+  {
+    SKINS.map(s => (
+      <button
+        type="button"
+        data-skin={s.id}
+        title={s.label}
+        aria-label={`Skin ${s.label}`}
+        class="skin-dot"
+        style={`--c:${s.color}`}
+      />
+    ))
+  }
+</div>
+
+<script>
+  const KEY = "skin";
+  function apply(skin: string) {
+    document.documentElement.setAttribute("data-skin", skin);
+    document
+      .querySelectorAll<HTMLElement>("[data-skin-picker] [data-skin]")
+      .forEach(b => b.classList.toggle("active", b.dataset.skin === skin));
+  }
+  function setup() {
+    const saved = localStorage.getItem(KEY) ?? "black";
+    apply(saved);
+    document
+      .querySelectorAll<HTMLElement>("[data-skin-picker] [data-skin]")
+      .forEach(b =>
+        b.addEventListener("click", () => {
+          const skin = b.dataset.skin!;
+          localStorage.setItem(KEY, skin);
+          apply(skin);
+        })
+      );
+  }
+  document.addEventListener("astro:page-load", setup);
+  setup();
+</script>

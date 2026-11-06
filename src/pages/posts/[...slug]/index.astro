@@ -31,6 +31,7 @@ export async function getStaticPaths() {
     params: { slug: getPostSlug(post.id, post.filePath) },
     props: {
       post,
+      entryNo: sortedPosts.length - index,
       related: getRelatedPosts(post, sortedPosts),
       // sortedPosts is newest-first, so "older" (prev) is a higher index
       // and "newer" (next) is a lower index.
@@ -63,11 +64,12 @@ type AdjacentPost = {
 type Props = {
   post: CollectionEntry<"posts">;
   related: CollectionEntry<"posts">[];
+  entryNo: number;
   prevPost: AdjacentPost;
   nextPost: AdjacentPost;
 };
 
-const { post, related, prevPost, nextPost } = Astro.props;
+const { post, related, entryNo, prevPost, nextPost } = Astro.props;
 const minutes = readingTime(post.body);
 const viewSlug =
   getPostSlug(post.id, post.filePath).replace(/^\/+/, "").split("/").pop() ??
@@ -128,6 +130,10 @@ const ogImage = ogImageUrl
     class:list={["app-layout", { "mt-8": !config.features.showBackButton }]}
     data-pagefind-body
   >
+    <span
+      class="entry-no text-muted-foreground block text-xs tracking-widest uppercase"
+      >Entry #{entryNo}</span
+    >
     <h1
       style={{ viewTransitionName: toTransitionName(post.id) }}
       class="text-accent inline-block text-2xl font-bold sm:text-3xl"

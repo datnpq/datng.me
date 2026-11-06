@@ -1,0 +1,34 @@
+---
+/** "Bạn là vị khách thứ 000123" — site-wide visits via /api/visits (KV). One count per browser session. */
+---
+
+<div
+  class="visitor-counter text-muted-foreground inline-flex items-center gap-2 text-xs"
+  data-visits
+  hidden
+>
+  <span>Bạn là vị khách thứ</span>
+  <span class="visitor-led" data-visits-n>000000</span>
+</div>
+
+<script>
+  async function countVisit() {
+    const el = document.querySelector<HTMLElement>("[data-visits]");
+    if (!el || el.dataset.done) return;
+    el.dataset.done = "1";
+    const out = el.querySelector("[data-visits-n]") as HTMLElement;
+    const seen = sessionStorage.getItem("visited");
+    try {
+      const res = await fetch("/api/visits", { method: seen ? "GET" : "POST" });
+      const data = (await res.json()) as { ok?: boolean; visits?: number };
+      if (data.ok && typeof data.visits === "number") {
+        out.textContent = String(data.visits).padStart(6, "0");
+        el.hidden = false;
+        if (!seen) sessionStorage.setItem("visited", "1");
+      }
+    } catch {
+      /* no worker in astro dev */
+    }
+  }
+  document.addEventListener("astro:page-load", countVisit);
+</script>

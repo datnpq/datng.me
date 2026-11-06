@@ -1,0 +1,48 @@
+---
+/** Yahoo! 360 "Friends" box: blogroll + Y!M-style presence of the blog owner. */
+import { FRIENDS } from "@/data/friends";
+---
+
+<section id="friends" class="mt-8">
+  <h2 class="text-2xl font-semibold tracking-wide">Friends</h2>
+  <p class="text-muted-foreground mt-1 text-sm">
+    Blog bạn bè và những nơi mình hay ghé.
+  </p>
+  <ul class="mt-4 grid gap-3 sm:grid-cols-2">
+    {
+      FRIENDS.map(f => (
+        <li>
+          <a
+            href={f.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="friend-card hover:border-accent flex items-center gap-3 rounded-lg border p-3 transition-colors"
+          >
+            {f.avatar ? (
+              <img
+                src={f.avatar}
+                alt=""
+                width="40"
+                height="40"
+                loading="lazy"
+                class="h-10 w-10 flex-none rounded-md object-cover"
+              />
+            ) : (
+              <span class="bg-accent text-accent-foreground flex h-10 w-10 flex-none items-center justify-center rounded-md text-lg font-bold">
+                {f.name.charAt(0)}
+              </span>
+            )}
+            <span class="min-w-0">
+              <span class="block truncate font-medium">{f.name}</span>
+              {f.note && (
+                <span class="text-muted-foreground block truncate text-xs">
+                  {f.note}
+                </span>
+              )}
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>

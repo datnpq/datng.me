@@ -815,3 +815,226 @@
   background: #0b3b1e;
   color: #7fffb0;
 }
+
+/* ---------- Friends box, Y!M status, visitor counter, entry no. ---------- */
+.ym-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #9ca3af;
+  box-shadow: 0 0 0 2px color-mix(in oklab, #9ca3af 30%, transparent);
+}
+.ym-status.online .ym-dot {
+  background: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
+  animation: ym-pulse 2s ease-in-out infinite;
+}
+.ym-status.idle .ym-dot {
+  background: #f59e0b;
+}
+@keyframes ym-pulse {
+  50% {
+    box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.15);
+  }
+}
+.visitor-led {
+  font-family: "Courier New", monospace;
+  background: #000;
+  color: #ff3b3b;
+  padding: 0 5px;
+  border: 1px inset #666;
+  letter-spacing: 2px;
+  font-weight: bold;
+}
+.skin-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--c);
+  border: 2px solid #9a9a9a;
+}
+.skin-dot.active {
+  border-color: #fff;
+  box-shadow: 0 0 0 2px var(--c);
+}
+.retro .skin-picker {
+  display: inline-flex;
+}
+.retro .ym-status {
+  color: #d0d0d0;
+}
+.retro .friend-card {
+  border: 1px solid #9a9a9a;
+  border-radius: 4px;
+  background: #000;
+  color: #fff;
+}
+.retro .friend-card:hover {
+  background: var(--retro-box-hover, #0d0d0d);
+}
+.retro section#friends {
+  border: 1px solid #9a9a9a;
+  border-radius: 6px;
+  background: #000;
+  padding: 0.9rem 1rem 1rem !important;
+  margin-top: 1rem;
+}
+.retro .entry-no {
+  color: #ff4b4b;
+  font-family: Verdana, Tahoma, sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 12px;
+}
+
+/* ---------- Retro skins (Yahoo! 360 themes): pink / blue ---------- */
+.retro[data-skin="pink"] {
+  --background: #fff0f6;
+  --foreground: #4a1030;
+  --accent: #d6336c;
+  --accent-foreground: #fff;
+  --muted: #ffd6e7;
+  --muted-foreground: #8a4a66;
+  --border: #f783ac;
+  --retro-box: #fff;
+  --retro-box-hover: #fff5f9;
+  --retro-line: #f783ac;
+  --retro-text: #4a1030;
+}
+.retro[data-skin="blue"] {
+  --background: #e8f1ff;
+  --foreground: #0b2a4a;
+  --accent: #1c6fd1;
+  --accent-foreground: #fff;
+  --muted: #cfe1fb;
+  --muted-foreground: #466a8f;
+  --border: #74a9e6;
+  --retro-box: #fff;
+  --retro-box-hover: #f3f8ff;
+  --retro-line: #74a9e6;
+  --retro-text: #0b2a4a;
+}
+.retro[data-skin="pink"] body,
+.retro[data-skin="blue"] body {
+  background: var(--background);
+  color: var(--retro-text);
+}
+.retro[data-skin="pink"] header > div,
+.retro[data-skin="pink"] #hero,
+.retro[data-skin="pink"] section#featured,
+.retro[data-skin="pink"] section#recent-posts,
+.retro[data-skin="pink"] section#friends,
+.retro[data-skin="pink"] #newsletter,
+.retro[data-skin="pink"] #comments,
+.retro[data-skin="pink"] #related,
+.retro[data-skin="pink"] #song,
+.retro[data-skin="pink"] #blast,
+.retro[data-skin="pink"] .retro-marquee,
+.retro[data-skin="pink"] .friend-card,
+.retro[data-skin="blue"] header > div,
+.retro[data-skin="blue"] #hero,
+.retro[data-skin="blue"] section#featured,
+.retro[data-skin="blue"] section#recent-posts,
+.retro[data-skin="blue"] section#friends,
+.retro[data-skin="blue"] #newsletter,
+.retro[data-skin="blue"] #comments,
+.retro[data-skin="blue"] #related,
+.retro[data-skin="blue"] #song,
+.retro[data-skin="blue"] #blast,
+.retro[data-skin="blue"] .retro-marquee,
+.retro[data-skin="blue"] .friend-card {
+  background: var(--retro-box);
+  border-color: var(--retro-line);
+  color: var(--retro-text);
+}
+.retro[data-skin="pink"] #blast::before,
+.retro[data-skin="pink"] #blast::after,
+.retro[data-skin="blue"] #blast::before,
+.retro[data-skin="blue"] #blast::after {
+  background: var(--retro-box);
+  border-color: var(--retro-line);
+}
+.retro[data-skin="pink"] header a,
+.retro[data-skin="pink"] header button,
+.retro[data-skin="pink"] #menu-items > li > a,
+.retro[data-skin="pink"] #hero h1,
+.retro[data-skin="pink"] .hero-name,
+.retro[data-skin="pink"] section h2.tracking-wide,
+.retro[data-skin="pink"] #comments h2,
+.retro[data-skin="pink"] #newsletter h2,
+.retro[data-skin="pink"] #main-content li.my-6 a,
+.retro[data-skin="pink"] #main-content h1.text-accent,
+.retro[data-skin="pink"] .status-line .text-foreground,
+.retro[data-skin="pink"] .friend-card,
+.retro[data-skin="blue"] header a,
+.retro[data-skin="blue"] header button,
+.retro[data-skin="blue"] #menu-items > li > a,
+.retro[data-skin="blue"] #hero h1,
+.retro[data-skin="blue"] .hero-name,
+.retro[data-skin="blue"] section h2.tracking-wide,
+.retro[data-skin="blue"] #comments h2,
+.retro[data-skin="blue"] #newsletter h2,
+.retro[data-skin="blue"] #main-content li.my-6 a,
+.retro[data-skin="blue"] #main-content h1.text-accent,
+.retro[data-skin="blue"] .status-line .text-foreground,
+.retro[data-skin="blue"] .friend-card {
+  color: var(--accent) !important;
+}
+.retro[data-skin="pink"] #menu-items > li > a:not(.active-nav)::after,
+.retro[data-skin="blue"] #menu-items > li > a:not(.active-nav)::after {
+  background: var(--accent);
+}
+.retro[data-skin="pink"] #hero p,
+.retro[data-skin="pink"] #main-content li.my-6 p,
+.retro[data-skin="pink"] .app-prose,
+.retro[data-skin="pink"] .status-line,
+.retro[data-skin="pink"] .ym-status,
+.retro[data-skin="pink"] footer > div,
+.retro[data-skin="blue"] #hero p,
+.retro[data-skin="blue"] #main-content li.my-6 p,
+.retro[data-skin="blue"] .app-prose,
+.retro[data-skin="blue"] .status-line,
+.retro[data-skin="blue"] .ym-status,
+.retro[data-skin="blue"] footer > div {
+  color: var(--retro-text);
+}
+.retro[data-skin="pink"] .app-prose a,
+.retro[data-skin="blue"] .app-prose a {
+  color: var(--accent);
+}
+.retro[data-skin="pink"] #main-content li.my-6 {
+  border-bottom-color: var(--retro-line);
+}
+.retro[data-skin="blue"] #main-content li.my-6 {
+  border-bottom-color: var(--retro-line);
+}
+.retro[data-skin="pink"] #main-content li.my-6:hover,
+.retro[data-skin="blue"] #main-content li.my-6:hover {
+  background: var(--retro-box-hover);
+}
+.retro[data-skin="pink"] #retro-stars,
+.retro[data-skin="blue"] #retro-stars {
+  opacity: 0.25;
+}
+.retro[data-skin="pink"] #newsletter button,
+.retro[data-skin="pink"] .bg-accent,
+.retro[data-skin="blue"] #newsletter button,
+.retro[data-skin="blue"] .bg-accent {
+  background: var(--accent) !important;
+  color: #fff !important;
+  border-color: var(--accent);
+}
+.retro[data-skin="pink"] #newsletter input,
+.retro[data-skin="blue"] #newsletter input {
+  background: #fff;
+  color: var(--retro-text);
+  border-color: var(--retro-line);
+}
+.retro[data-skin="pink"] .skin-dot,
+.retro[data-skin="blue"] .skin-dot {
+  border-color: #fff;
+}
+.retro[data-skin="pink"] .skin-dot.active,
+.retro[data-skin="blue"] .skin-dot.active {
+  border-color: var(--retro-text);
+}
