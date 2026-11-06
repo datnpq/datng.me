@@ -1,0 +1,269 @@
+---
+/**
+ * Floating music player (YouTube IFrame API). Persists across View Transitions
+ * (transition:persist) so the song keeps playing while navigating. Browsers
+ * block autoplay with sound, so playback starts on the first click; afterwards
+ * the "playing" state is remembered and resumed on the next visit after any
+ * user interaction.
+ */
+import { PLAYLIST, PLAYLIST_NAME } from "@/data/playlist";
+---
+
+<aside
+  id="music-player"
+  class="music-player"
+  data-playlist={JSON.stringify(PLAYLIST)}
+  data-name={PLAYLIST_NAME}
+  transition:persist
+  transition:name="music-player"
+  aria-label="Máy nghe nhạc"
+>
+  <button
+    type="button"
+    class="mp-toggle"
+    data-mp="toggle"
+    title="Mở / thu gọn máy nghe nhạc"
+    aria-expanded="false"
+  >
+    <span class="mp-note" aria-hidden="true">♪</span>
+    <span class="mp-toggle-label">{PLAYLIST_NAME}</span>
+  </button>
+
+  <div class="mp-body" hidden>
+    <div class="mp-screen">
+      <div class="mp-title" data-mp="title">
+        <span data-mp="title-text">— chọn Play để bắt đầu —</span>
+      </div>
+      <div class="mp-meta">
+        <span data-mp="index">0/{PLAYLIST.length}</span>
+        <span data-mp="time">00:00</span>
+      </div>
+      <div class="mp-eq" data-mp="eq" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+    </div>
+    <div class="mp-video" data-mp="video"><div id="mp-yt"></div></div>
+    <div class="mp-controls">
+      <button type="button" data-mp="prev" title="Bài trước">⏮</button>
+      <button type="button" data-mp="play" title="Phát / tạm dừng">▶</button>
+      <button type="button" data-mp="next" title="Bài sau">⏭</button>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value="60"
+        data-mp="vol"
+        title="Âm lượng"
+        aria-label="Âm lượng"
+      />
+      <button type="button" data-mp="tv" title="Hiện / ẩn video">📺</button>
+    </div>
+    <ol class="mp-list" data-mp="list">
+      {
+        PLAYLIST.map((t, i) => (
+          <li>
+            <button type="button" data-mp="pick" data-i={i}>
+              <span class="mp-n">{String(i + 1).padStart(2, "0")}.</span>
+              {t.artist} – {t.title}
+            </button>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</aside>
+
+<script>
+  export {};
+  type Track = { id: string; title: string; artist: string };
+  // Minimal typing for the YouTube IFrame API surface we use.
+  type YTPlayer = {
+    playVideo(): void;
+    pauseVideo(): void;
+    loadVideoById(id: string): void;
+    cueVideoById(id: string): void;
+    setVolume(v: number): void;
+    getCurrentTime(): number;
+    getPlayerState(): number;
+  };
+  type YTNS = {
+    Player: new (el: string | HTMLElement, opts: unknown) => YTPlayer;
+    PlayerState: { PLAYING: number; ENDED: number; PAUSED: number };
+  };
+  declare global {
+    interface Window {
+      YT?: YTNS;
+      onYouTubeIframeAPIReady?: () => void;
+      __mp?: { inited: boolean };
+    }
+  }
+
+  const KEY = "mp-state";
+  const root = document.getElementById("music-player");
+
+  function init() {
+    if (!root || window.__mp?.inited) return;
+    window.__mp = { inited: true };
+
+    const tracks = JSON.parse(root.dataset.playlist ?? "[]") as Track[];
+    const q = <T extends Element>(sel: string) =>
+      root.querySelector<T>(`[data-mp="${sel}"]`)!;
+    const toggle = q<HTMLButtonElement>("toggle");
+    const body = root.querySelector<HTMLElement>(".mp-body")!;
+    const titleText = q<HTMLElement>("title-text");
+    const idx = q<HTMLElement>("index");
+    const time = q<HTMLElement>("time");
+    const eq = q<HTMLElement>("eq");
+    const playBtn = q<HTMLButtonElement>("play");
+    const vol = q<HTMLInputElement>("vol");
+    const video = q<HTMLElement>("video");
+
+    let state = { i: 0, playing: false, open: false, vol: 60, tv: false };
+    try {
+      state = { ...state, ...JSON.parse(localStorage.getItem(KEY) ?? "{}") };
+    } catch {
+      /* ignore */
+    }
+    const save = () => {
+      try {
+        localStorage.setItem(KEY, JSON.stringify(state));
+      } catch {
+        /* ignore */
+      }
+    };
+
+    let player: YTPlayer | null = null;
+    let ready = false;
+    let wantPlay = false;
+
+    const show = (i: number) => {
+      const t = tracks[i];
+      titleText.textContent = t ? `${t.artist} – ${t.title}` : "";
+      idx.textContent = `${i + 1}/${tracks.length}`;
+      root!
+        .querySelectorAll<HTMLElement>('[data-mp="pick"]')
+        .forEach(b => b.classList.toggle("active", Number(b.dataset.i) === i));
+    };
+    const setOpen = (o: boolean) => {
+      state.open = o;
+      body.hidden = !o;
+      toggle.setAttribute("aria-expanded", String(o));
+      save();
+    };
+    const setPlaying = (p: boolean) => {
+      state.playing = p;
+      playBtn.textContent = p ? "⏸" : "▶";
+      root!.classList.toggle("playing", p);
+      eq.classList.toggle("on", p);
+      save();
+    };
+    const setTv = (on: boolean) => {
+      state.tv = on;
+      video.classList.toggle("show", on);
+      save();
+    };
+
+    function play(i = state.i) {
+      state.i = ((i % tracks.length) + tracks.length) % tracks.length;
+      show(state.i);
+      wantPlay = true;
+      if (player && ready) {
+        player.loadVideoById(tracks[state.i].id);
+        player.setVolume(state.vol);
+      } else {
+        loadApi();
+      }
+      save();
+    }
+    function pause() {
+      wantPlay = false;
+      player?.pauseVideo();
+      setPlaying(false);
+    }
+
+    function loadApi() {
+      if (window.YT?.Player) return createPlayer();
+      if (document.getElementById("yt-iframe-api")) return;
+      const s = document.createElement("script");
+      s.id = "yt-iframe-api";
+      s.src = "https://www.youtube.com/iframe_api";
+      window.onYouTubeIframeAPIReady = createPlayer;
+      document.head.appendChild(s);
+    }
+    function createPlayer() {
+      if (player || !window.YT) return;
+      player = new window.YT.Player("mp-yt", {
+        width: 240,
+        height: 135,
+        videoId: tracks[state.i]?.id,
+        playerVars: { rel: 0, playsinline: 1, origin: location.origin },
+        events: {
+          onReady: () => {
+            ready = true;
+            player!.setVolume(state.vol);
+            if (wantPlay) player!.playVideo();
+          },
+          onStateChange: (e: { data: number }) => {
+            const S = window.YT!.PlayerState;
+            if (e.data === S.PLAYING) setPlaying(true);
+            else if (e.data === S.PAUSED) setPlaying(false);
+            else if (e.data === S.ENDED) play(state.i + 1);
+          },
+          onError: () => play(state.i + 1), // skip unembeddable videos
+        },
+      });
+    }
+
+    // Controls
+    toggle.addEventListener("click", () => setOpen(!state.open));
+    playBtn.addEventListener("click", () => {
+      if (state.playing) pause();
+      else if (player && ready) {
+        wantPlay = true;
+        player.playVideo();
+      } else play();
+    });
+    q("prev").addEventListener("click", () => play(state.i - 1));
+    q("next").addEventListener("click", () => play(state.i + 1));
+    q("tv").addEventListener("click", () => setTv(!state.tv));
+    vol.addEventListener("input", () => {
+      state.vol = Number(vol.value);
+      player?.setVolume(state.vol);
+      save();
+    });
+    root
+      .querySelectorAll<HTMLButtonElement>('[data-mp="pick"]')
+      .forEach(b =>
+        b.addEventListener("click", () => play(Number(b.dataset.i)))
+      );
+
+    // Time ticker
+    setInterval(() => {
+      if (!player || !ready || !state.playing) return;
+      const s = Math.floor(player.getCurrentTime() || 0);
+      time.textContent = `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+    }, 1000);
+
+    // Restore UI; resume playback on the first user gesture if it was playing
+    vol.value = String(state.vol);
+    show(state.i);
+    body.hidden = !state.open;
+    toggle.setAttribute("aria-expanded", String(state.open));
+    video.classList.toggle("show", state.tv);
+    if (state.playing) {
+      setPlaying(false);
+      root.classList.add("resume");
+      const resume = () => {
+        root!.classList.remove("resume");
+        play(state.i);
+        window.removeEventListener("pointerdown", resume);
+        window.removeEventListener("keydown", resume);
+      };
+      window.addEventListener("pointerdown", resume, { once: true });
+      window.addEventListener("keydown", resume, { once: true });
+    }
+  }
+
+  init();
+  document.addEventListener("astro:page-load", init);
+</script>

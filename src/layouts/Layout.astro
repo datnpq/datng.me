@@ -1,5 +1,6 @@
 ---
 import RetroEffects from "@/components/RetroEffects.astro";
+import MusicPlayer from "@/components/MusicPlayer.astro";
 import { Font } from "astro:assets";
 import { ClientRouter } from "astro:transitions";
 import { resolveDefaultOgImagePath } from "@/utils/resolveDefaultOgImagePath";
@@ -119,6 +120,7 @@ const rssHref = getAssetPath("rss.xml");
   >
     <slot />
     <RetroEffects />
+    <MusicPlayer />
     <!-- Cloudflare Web Analytics (privacy-first, no cookies) -->
     <script
       is:inline

@@ -66,6 +66,10 @@ Nút đổi giao diện xoay vòng Sáng → Tối → **Retro 360** (layout Yah
 - `/guestbook/` là một thread Giscus chung (mapping `specific`, term `guestbook`).
 - Cloudflare Web Analytics: beacon chèn trong `src/layouts/Layout.astro` (token công khai), xem số liệu ở Dashboard → Web analytics → datng.me.
 
+## Máy nghe nhạc
+
+Nút "🎄 Nhạc Giáng sinh" góc dưới phải (skin Winamp ở theme Retro). Phát qua YouTube IFrame API, nhạc tiếp tục khi chuyển trang, nhớ bài và trạng thái. Đổi playlist trong `src/data/playlist.ts` (chỉ cần YouTube video id). Trình duyệt chặn tự phát, nên người xem phải bấm Play một lần.
+
 ## Viết bài bằng giao diện web (Sveltia CMS)
 
 Mở https://datng.me/admin/ → "Sign In with Token" → tạo GitHub personal access token (Contents: Read and write cho repo `datnpq/datng.me`) → dán vào. Lưu bài = commit lên `main` = tự deploy.
