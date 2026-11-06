@@ -1,4 +1,5 @@
 ---
+import IconYm from "@/assets/icons/IconYm.svg";
 /**
  * Yahoo! Messenger-style presence: "Online" during Vietnam daytime,
  * "Idle" late at night. Pure fun, computed client-side in Asia/Ho_Chi_Minh.
@@ -6,6 +7,7 @@
 ---
 
 <span class="ym-status inline-flex items-center gap-1.5 text-sm" data-ym>
+  <IconYm class="ym-icon" />
   <span class="ym-dot" aria-hidden="true"></span>
   <span data-ym-text>…</span>
 </span>

@@ -1038,3 +1038,25 @@
 .retro[data-skin="blue"] .skin-dot.active {
   border-color: var(--retro-text);
 }
+
+.ym-icon {
+  width: 18px;
+  height: 18px;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
+}
+.ym-status.idle .ym-icon {
+  filter: grayscale(0.6) opacity(0.8);
+}
+.ym-status.online .ym-icon {
+  animation: ym-wink 6s ease-in-out infinite;
+}
+@keyframes ym-wink {
+  0%,
+  92%,
+  100% {
+    transform: rotate(0);
+  }
+  95% {
+    transform: rotate(-12deg) scale(1.15);
+  }
+}
