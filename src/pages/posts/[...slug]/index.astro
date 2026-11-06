@@ -16,6 +16,10 @@ import BackToTopButton from "./_components/BackToTopButton.astro";
 import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
 import Comments from "@/components/Comments.astro";
 import Newsletter from "@/components/Newsletter.astro";
+import ViewCounter from "@/components/ViewCounter.astro";
+import RelatedPosts from "@/components/RelatedPosts.astro";
+import { readingTime } from "@/utils/readingTime";
+import { getRelatedPosts } from "@/utils/getRelatedPosts";
 import PostToc from "./_components/PostToc.astro";
 import config from "@/config";
 
@@ -27,6 +31,7 @@ export async function getStaticPaths() {
     params: { slug: getPostSlug(post.id, post.filePath) },
     props: {
       post,
+      related: getRelatedPosts(post, sortedPosts),
       // sortedPosts is newest-first, so "older" (prev) is a higher index
       // and "newer" (next) is a lower index.
       prevPost:
@@ -57,11 +62,16 @@ type AdjacentPost = {
 
 type Props = {
   post: CollectionEntry<"posts">;
+  related: CollectionEntry<"posts">[];
   prevPost: AdjacentPost;
   nextPost: AdjacentPost;
 };
 
-const { post, prevPost, nextPost } = Astro.props;
+const { post, related, prevPost, nextPost } = Astro.props;
+const minutes = readingTime(post.body);
+const viewSlug =
+  getPostSlug(post.id, post.filePath).replace(/^\/+/, "").split("/").pop() ??
+  post.id;
 const locale = Astro.currentLocale ?? config.site.lang;
 
 const {
@@ -125,8 +135,14 @@ const ogImage = ogImageUrl
       {title}
     </h1>
 
-    <div class="my-2 flex items-center gap-2">
+    <div class="my-2 flex flex-wrap items-center gap-2">
       <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
+      <span aria-hidden="true" class="text-muted-foreground">|</span>
+      <span class="text-muted-foreground text-sm sm:text-base"
+        >⏱ {minutes} phút đọc</span
+      >
+      <span aria-hidden="true" class="text-muted-foreground">|</span>
+      <ViewCounter slug={viewSlug} />
       <span
         aria-hidden="true"
         class:list={[
@@ -175,6 +191,8 @@ const ogImage = ogImageUrl
     <hr class="my-8 border-dashed" />
 
     <AdjacentPostNav {prevPost} {nextPost} />
+
+    <RelatedPosts posts={related} />
 
     <Newsletter class="mt-10" />
 

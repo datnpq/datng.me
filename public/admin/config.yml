@@ -1,0 +1,95 @@
+# Sveltia CMS — https://datng.me/admin/
+# Đăng nhập bằng "Sign In with Token" (GitHub personal access token, quyền Contents: read/write cho repo này).
+backend:
+  name: github
+  repo: datnpq/datng.me
+  branch: main
+  base_url: https://datng.me
+  auth_methods: [token]
+  commit_messages:
+    create: "post: {{slug}}"
+    update: "update: {{slug}}"
+    delete: "delete: {{slug}}"
+    uploadMedia: "media: {{path}}"
+    deleteMedia: "media: remove {{path}}"
+
+site_url: https://datng.me
+display_url: https://datng.me
+locale: vi
+
+media_folder: src/assets/images
+public_folder: "@/assets/images"
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: posts
+    label: Bài viết
+    label_singular: Bài viết
+    folder: src/content/posts
+    create: true
+    extension: md
+    format: frontmatter
+    slug: "{{slug}}"
+    summary: "{{title}} — {{pubDatetime}}"
+    sortable_fields: [pubDatetime, title]
+    view_filters:
+      - label: Nháp
+        field: draft
+        pattern: true
+    fields:
+      - { name: title, label: Tiêu đề, widget: string }
+      - {
+          name: description,
+          label: Mô tả ngắn,
+          widget: text,
+          hint: "Hiện ở danh sách bài và thẻ meta.",
+        }
+      - {
+          name: pubDatetime,
+          label: Ngày đăng,
+          widget: datetime,
+          format: "YYYY-MM-DDTHH:mm:ssZ",
+        }
+      - {
+          name: modDatetime,
+          label: Ngày cập nhật,
+          widget: datetime,
+          required: false,
+          format: "YYYY-MM-DDTHH:mm:ssZ",
+        }
+      - { name: tags, label: Chủ đề, widget: list, default: [others] }
+      - {
+          name: featured,
+          label: Nổi bật,
+          widget: boolean,
+          default: false,
+          required: false,
+        }
+      - {
+          name: draft,
+          label: Nháp,
+          widget: boolean,
+          default: false,
+          required: false,
+        }
+      - {
+          name: ogImage,
+          label: Ảnh OG (tuỳ chọn),
+          widget: image,
+          required: false,
+        }
+      - { name: body, label: Nội dung, widget: markdown }
+
+  - name: pages
+    label: Trang
+    folder: src/content/pages
+    create: false
+    extension: md
+    format: frontmatter
+    fields:
+      - { name: title, label: Tiêu đề, widget: string }
+      - { name: description, label: Mô tả, widget: string, required: false }
+      - { name: body, label: Nội dung, widget: markdown }

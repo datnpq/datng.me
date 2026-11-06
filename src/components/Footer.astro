@@ -21,6 +21,23 @@ const currentYear = new Date().getFullYear();
     class="border-border flex flex-col items-center justify-between border-t py-6 sm:flex-row-reverse sm:py-4"
   >
     <Socials />
+    <nav class="my-2 flex items-center gap-4 text-sm" aria-label="Trang phụ">
+      <a
+        href="/now/"
+        class="hover:text-accent underline decoration-dashed underline-offset-4"
+        >/now</a
+      >
+      <a
+        href="/uses/"
+        class="hover:text-accent underline decoration-dashed underline-offset-4"
+        >/uses</a
+      >
+      <a
+        href="/rss.xml"
+        class="hover:text-accent underline decoration-dashed underline-offset-4"
+        >RSS</a
+      >
+    </nav>
     <div class="my-2 flex flex-col items-center whitespace-nowrap sm:flex-row">
       <span>{t.footer.copyright} &#169; {currentYear}</span>
       <span class="hidden sm:inline">&nbsp;|&nbsp;</span>

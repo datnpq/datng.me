@@ -1,0 +1,62 @@
+---
+/** Post view counter. Reads/increments /api/views/<slug> (worker/index.ts → KV). */
+type Props = { slug: string; class?: string };
+const { slug, class: className } = Astro.props;
+---
+
+<span
+  class:list={[
+    "text-muted-foreground inline-flex items-center gap-1 text-sm sm:text-base",
+    className,
+  ]}
+  data-view-counter
+  data-slug={slug}
+  title="Lượt xem"
+>
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="inline-block"
+    aria-hidden="true"
+  >
+    <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+    <path
+      d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"
+    ></path>
+  </svg>
+  <span data-views>…</span>
+  <span class="sr-only">lượt xem</span>
+</span>
+
+<script>
+  async function countView() {
+    const el = document.querySelector<HTMLElement>("[data-view-counter]");
+    if (!el || el.dataset.done) return;
+    el.dataset.done = "1";
+    const out = el.querySelector("[data-views]") as HTMLElement;
+    const slug = el.dataset.slug!;
+    const seenKey = `viewed:${slug}`;
+    const seen = sessionStorage.getItem(seenKey);
+    try {
+      const res = await fetch(`/api/views/${slug}`, {
+        method: seen ? "GET" : "POST",
+      });
+      const data = (await res.json()) as { ok?: boolean; views?: number };
+      if (data.ok && typeof data.views === "number") {
+        out.textContent = new Intl.NumberFormat("vi-VN").format(data.views);
+        if (!seen) sessionStorage.setItem(seenKey, "1");
+      } else {
+        el.remove();
+      }
+    } catch {
+      el.remove(); // astro dev has no worker → hide quietly
+    }
+  }
+  document.addEventListener("astro:page-load", countView);
+</script>

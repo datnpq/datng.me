@@ -21,8 +21,8 @@ Wayback Machine còn giữ được [bản chụp ngày 30/07/2008](https://web.
 - Mục **Thủ Thuật Y!M**: lấy avatar Yahoo Messenger, check ID, bảng mã màu, biểu tượng
 - **Bói vui**: bói ngày sinh, bói tình duyên
 - Mục CNTT: mã hoá web, tạo tài khoản Box.net, chuyển HTML sang PHP/ASP
-- Góc "Mỗi tuần một bài hát" đang phát *Seven Days* của Craig David
-- Bộ đếm lượt truy cập gostats, và dòng slogan: *"TeenStyle9x - Nơi Cảm Xúc Thăng Hoa"*
+- Góc "Mỗi tuần một bài hát" đang phát _Seven Days_ của Craig David
+- Bộ đếm lượt truy cập gostats, và dòng slogan: _"TeenStyle9x - Nơi Cảm Xúc Thăng Hoa"_
 
 Đằng sau là một diễn đàn **vBulletin 3.7.0 Beta 5** với đủ bộ: Trung Tâm, Tòa Án, Members' Face, Audition, HotStep, Boom Online, Harvest Moon, The Sims, Quán Trà Sữa, Anime - Manga... Đúng chất diễn đàn teen 2008. Archive lưu được khoảng một năm hoạt động, từ 06/2008 đến 05/2009.
 
@@ -38,7 +38,7 @@ Những thứ mình nhớ ra khi đọc lại:
 - Khu "Trụ Sở - Pháo Đài", "Tự Kỷ Quán", "Tổng Đài Chém Gió", "Xóm Con Trai - Thôn Con Gái", "Trại Giam" cho spammer
 - Có hẳn mục **Blog Yahoo 360**: entry hay, thư viện theme, thủ thuật blog
 - Mục CLB Webmaster: share code, domain - hosting. Hồi đó đã mê cái này rồi
-- Một thread tên *"Diễn đàn bị hack ==!"* ngày 07/11/2010. Chuyện thường ngày của host miễn phí
+- Một thread tên _"Diễn đàn bị hack ==!"_ ngày 07/11/2010. Chuyện thường ngày của host miễn phí
 
 Có một bài góp ý ở mục "Thắc Mắc - Góp Ý" ký tên **Quốc Đạt**, ngày 02/03/2010. Chắc là mình tự góp ý cho diễn đàn của mình.
 

@@ -37,6 +37,10 @@ Tạo file `.md` trong `src/content/posts/`. Xem bài "Cách viết một bài m
 - `worker/index.ts` — Worker xử lý `/api/subscribe` (newsletter qua Resend), còn lại trả static
 - `src/components/Newsletter.astro` — form đăng ký nhận bài
 - `src/components/Comments.astro` — bình luận Giscus (GitHub Discussions)
+- `src/components/ViewCounter.astro`, `RelatedPosts.astro` — lượt xem, bài liên quan
+- `src/utils/ogTemplate.ts` — mẫu ảnh OG (dùng `public/avatar.jpg`)
+- `src/content/pages/now.md`, `uses.md` — trang /now, /uses
+- `public/admin/config.yml` — cấu hình Sveltia CMS
 
 ## Newsletter (Resend)
 
@@ -51,6 +55,14 @@ Tuỳ chọn: thêm `RESEND_SEGMENT_ID` vào `vars` trong `wrangler.jsonc` để
 ## Bình luận (Giscus)
 
 Repo `datnpq/datng.me` đã bật Discussions. Cần cài app https://github.com/apps/giscus cho repo này một lần. ID repo/category nằm trong `src/components/Comments.astro`.
+
+## Viết bài bằng giao diện web (Sveltia CMS)
+
+Mở https://datng.me/admin/ → "Sign In with Token" → tạo GitHub personal access token (Contents: Read and write cho repo `datnpq/datng.me`) → dán vào. Lưu bài = commit lên `main` = tự deploy.
+
+## Lượt xem bài viết
+
+Worker lưu đếm trong KV (`VIEWS`, key `views:<slug>`), API `GET|POST /api/views/<slug>`. Mỗi phiên trình duyệt chỉ tính một lần cho mỗi bài.
 
 ## Deploy
 

@@ -16,4 +16,6 @@ Mục đích chính của blog là để mình tra cứu lại khi cần. Nếu 
 
 ## Về blog này
 
+Xem thêm: [/now](/now/) — dạo này mình làm gì, [/uses](/uses/) — công cụ mình dùng.
+
 Blog được dựng bằng [Astro](https://astro.build/) với theme [AstroPaper](https://github.com/satnaing/astro-paper), host trên Cloudflare. Toàn bộ nội dung viết bằng Markdown và lưu trên Git.
