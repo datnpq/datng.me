@@ -1,4 +1,5 @@
 ---
+import RetroEffects from "@/components/RetroEffects.astro";
 import { Font } from "astro:assets";
 import { ClientRouter } from "astro:transitions";
 import { resolveDefaultOgImagePath } from "@/utils/resolveDefaultOgImagePath";
@@ -117,6 +118,13 @@ const rssHref = getAssetPath("rss.xml");
     class="bg-background font-app text-foreground selection:bg-accent/75 selection:text-accent-foreground flex min-h-svh flex-col"
   >
     <slot />
+    <RetroEffects />
+    <!-- Cloudflare Web Analytics (privacy-first, no cookies) -->
+    <script
+      is:inline
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon='{"token": "6dcc4f0154b1469caafcf1280928e73e"}'></script>
     <script>
       import "@/scripts/theme";
     </script>

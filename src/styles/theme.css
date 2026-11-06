@@ -35,11 +35,11 @@
 
 /* Retro theme: Yahoo! 360 vibe (purple, Tahoma, bevels) */
 [data-theme="retro"] {
-  --background: #f3eefa;
-  --foreground: #2b1b3d;
-  --accent: #7b0099;
-  --accent-foreground: #ffffff;
-  --muted: #e2d6f2;
-  --muted-foreground: #6b5a80;
-  --border: #b89bd6;
+  --background: #000000;
+  --foreground: #e6e6e6;
+  --accent: #ffffff;
+  --accent-foreground: #000000;
+  --muted: #1a1a1a;
+  --muted-foreground: #a3a3a3;
+  --border: #8c8c8c;
 }

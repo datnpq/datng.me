@@ -1,32 +1,37 @@
 ---
-/** Blast + mood from src/content/pages/now.md (Yahoo! 360 style), shown on the hero. */
+/**
+ * Blast (Yahoo! 360 speech bubble) + Mood, from src/content/pages/now.md.
+ * variant="blast" renders only the blast line; variant="mood" only the mood.
+ */
 import { getEntry } from "astro:content";
+type Props = { variant: "blast" | "mood" };
+const { variant } = Astro.props;
 const now = await getEntry("pages", "now");
 const blast = now?.data.blast;
 const mood = now?.data.mood;
 ---
 
 {
-  (blast || mood) && (
-    <div class="status-line mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-      {blast && (
-        <a
-          href="/now/"
-          class="hover:text-accent group inline-flex items-center gap-1.5"
-          title="Xem trang /now"
-        >
-          <span class="text-accent">💬</span>
-          <span class="decoration-dashed underline-offset-4 group-hover:underline">
-            {blast}
-          </span>
-        </a>
-      )}
-      {mood && (
-        <span class="text-muted-foreground inline-flex items-center gap-1.5">
-          <span>Mood:</span>
-          <span class="text-foreground">{mood}</span>
+  variant === "blast" && blast && (
+    <div id="blast" class="text-sm">
+      <a
+        href="/now/"
+        class="hover:text-accent group inline-flex items-center gap-1.5"
+        title="Blast — xem trang /now"
+      >
+        <span aria-hidden="true">💬</span>
+        <span class="decoration-dashed underline-offset-4 group-hover:underline">
+          {blast}
         </span>
-      )}
+      </a>
+    </div>
+  )
+}
+{
+  variant === "mood" && mood && (
+    <div class="status-line mt-3 flex items-center gap-1.5 text-sm">
+      <span class="text-muted-foreground">Mood:</span>
+      <span class="text-foreground">{mood}</span>
     </div>
   )
 }

@@ -225,127 +225,221 @@
   rotate: 0deg;
 }
 
-/* ---------- Retro 360 theme ---------- */
+/* ---------- Retro 360 theme (Yahoo! 360 black layout) ---------- */
 .retro body {
-  font-family: Tahoma, Verdana, "Segoe UI", sans-serif;
-  font-size: 14px;
-  background-color: var(--background);
-  background-image:
-    radial-gradient(rgba(123, 0, 153, 0.08) 1px, transparent 1px),
-    radial-gradient(rgba(123, 0, 153, 0.08) 1px, transparent 1px);
-  background-size: 18px 18px;
-  background-position:
-    0 0,
-    9px 9px;
+  font-family: Verdana, Tahoma, "Segoe UI", Arial, sans-serif;
+  font-size: 13px;
+  background: #000;
+  color: #e6e6e6;
 }
 .retro .app-layout {
-  max-width: 56rem;
+  max-width: 62rem;
 }
-.retro header .app-layout > div,
 .retro header > div {
-  background: linear-gradient(180deg, #8e2bb5 0%, #7b0099 100%);
-  color: #fff;
-  border-radius: 6px 6px 0 0;
-  border: 2px solid #4a0060;
-  border-bottom: 0;
-  padding-inline: 1rem;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  border: 1px solid #9a9a9a;
+  border-radius: 6px;
+  background: #000;
+  padding: 0.6rem 1rem;
+  margin-top: 0.75rem;
 }
 .retro header a,
 .retro header button,
 .retro #menu-items > li > a {
   color: #fff !important;
-}
-.retro #menu-items > li > a:hover,
-.retro header .active-nav {
-  color: #ffe66d !important;
-  text-decoration-color: #ffe66d;
+  font-family: Verdana, Tahoma, sans-serif;
+  font-size: 13px;
 }
 .retro #menu-items > li > a:not(.active-nav)::after {
-  background: #ffe66d;
-}
-.retro #main-content,
-.retro footer > div {
   background: #fff;
-  border: 2px solid #4a0060;
-  border-top: 0;
-  padding: 1rem 1.25rem 1.5rem;
-  box-shadow: 4px 4px 0 #b89bd6;
 }
-.retro footer > div {
-  border-top: 1px dotted var(--border);
-  margin-top: 0;
-  border-radius: 0 0 6px 6px;
+.retro header .active-nav {
+  text-decoration: none;
+  font-weight: bold;
+}
+.retro #menu-items > li + li > a::before {
+  content: "| ";
+  color: #9a9a9a;
 }
 .retro main {
-  margin-top: 0 !important;
+  margin-top: 0.75rem !important;
 }
-.retro h1,
-.retro h2,
-.retro h3 {
-  font-family: "Trebuchet MS", Tahoma, Verdana, sans-serif;
-  letter-spacing: 0;
+/* Blast: thought bubble like 360 */
+.retro #blast {
+  display: block;
+  position: relative;
+  margin: 0.5rem 0 1rem 2.75rem;
+  padding: 0.6rem 1.1rem;
+  border: 1px solid #fff;
+  border-radius: 999px;
+  background: #000;
+  color: #ff4b4b;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 15px;
 }
+.retro #blast::before,
+.retro #blast::after {
+  content: "";
+  position: absolute;
+  background: #000;
+  border: 1px solid #fff;
+  border-radius: 50%;
+}
+.retro #blast::before {
+  width: 14px;
+  height: 14px;
+  left: -22px;
+  bottom: -2px;
+}
+.retro #blast::after {
+  width: 7px;
+  height: 7px;
+  left: -34px;
+  bottom: -10px;
+}
+.retro #blast a,
+.retro #blast a:hover {
+  color: #ff4b4b;
+  text-decoration: none;
+}
+/* hero as profile card */
 .retro #hero {
-  background: #faf6ff;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 1.25rem !important;
-  margin-top: 1rem;
-  box-shadow: inset 0 0 0 3px #fff;
+  border: 1px solid #9a9a9a;
+  border-radius: 6px;
+  background: #000;
+  padding: 1rem !important;
+  gap: 1.25rem;
+  box-shadow: none;
 }
 .retro .avatar-ring::before {
   display: none;
 }
+.retro .avatar-ring {
+  padding: 0;
+}
 .retro .avatar-float {
   animation: none;
-  border-radius: 4px !important;
-  border: 3px solid #fff;
-  outline: 1px solid var(--border);
+  border-radius: 0 !important;
+  border: 1px solid #9a9a9a;
+  width: 11rem;
+  height: 11rem;
+}
+.retro #hero h1 {
+  font-family: Verdana, Tahoma, sans-serif;
+  font-size: 1.4rem;
+  color: #fff;
 }
 .retro .hero-name {
   background: none;
-  color: var(--accent);
   animation: none;
+  color: #fff;
+}
+.retro #hero p {
+  color: #d0d0d0;
+  font-size: 13px;
 }
 .retro #hero-badge {
-  display: none; /* terminal badge doesn't fit 2008 */
+  display: none;
 }
 .retro .status-line {
-  display: flex !important;
+  color: #d0d0d0;
+}
+.retro .status-line .text-foreground {
+  color: #fff;
+}
+.retro .cursor-blink {
+  display: none;
+}
+/* sections = 360 boxes with white title */
+.retro section#featured,
+.retro section#recent-posts,
+.retro #newsletter,
+.retro #comments,
+.retro #related,
+.retro #song {
+  border: 1px solid #9a9a9a;
+  border-radius: 6px;
+  background: #000;
+  padding: 0.9rem 1rem 1rem !important;
+  margin-top: 1rem;
+}
+.retro section h2.tracking-wide,
+.retro #comments h2,
+.retro #newsletter h2 {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0 0 0.4rem;
+  color: #fff;
+  font-family: Verdana, Tahoma, sans-serif;
+  font-size: 1.1rem;
+  font-weight: normal;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.retro #comments h2::before {
+  content: "";
 }
 .retro #main-content li.my-6 {
-  border: 1px dotted var(--border);
-  background: #fff;
-  margin-inline: 0;
+  border: 0;
+  border-bottom: 1px dotted #555;
+  border-radius: 0;
+  background: none;
+  margin: 0;
+  padding: 0.7rem 0;
 }
 .retro #main-content li.my-6:hover {
-  background: #faf6ff;
-  box-shadow: 3px 3px 0 #e2d6f2;
+  background: #0d0d0d;
+  box-shadow: none;
   transform: none;
+}
+.retro #main-content li.my-6 a {
+  color: #fff;
 }
 .retro #main-content li.my-6 h3,
 .retro #main-content li.my-6 h2 {
-  text-decoration: underline;
-}
-.retro section h2.tracking-wide {
-  background: linear-gradient(180deg, #ede4f8, #e2d6f2);
-  border-left: 6px solid var(--accent);
-  padding: 0.25rem 0.75rem;
+  font-family: Verdana, Tahoma, sans-serif;
   font-size: 1.05rem;
-  text-transform: uppercase;
+  font-weight: normal;
+  text-decoration: none;
 }
+.retro #main-content li.my-6 p {
+  color: #bdbdbd;
+}
+.retro #main-content li.my-6 time {
+  color: #9a9a9a;
+  font-size: 11px;
+}
+.retro #main-content > div.text-center a {
+  color: #fff;
+}
+.retro #main-content > div.text-center a::after {
+  content: " »";
+}
+.retro footer > div {
+  border-top: 1px solid #444;
+  color: #9a9a9a;
+}
+.retro footer a {
+  color: #d0d0d0;
+}
+/* prose on post pages */
 .retro .app-prose {
-  font-family: Tahoma, Verdana, sans-serif;
-  font-size: 14.5px;
-  line-height: 1.7;
+  font-family: Verdana, Tahoma, sans-serif;
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: #e6e6e6;
 }
 .retro .app-prose a {
-  color: #0000ee;
+  color: #8ab4f8;
   text-decoration: underline;
 }
 .retro .app-prose a:visited {
-  color: #551a8b;
+  color: #c58af9;
+}
+.retro #main-content h1.text-accent {
+  color: #fff;
+  font-family: Verdana, Tahoma, sans-serif;
+  font-weight: normal;
 }
 .retro [data-view-counter] [data-views] {
   font-family: "Courier New", monospace;
@@ -355,32 +449,20 @@
   border: 1px inset #666;
   letter-spacing: 1px;
 }
-.retro #newsletter {
-  background: #faf6ff;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-}
 .retro #newsletter button,
 .retro .bg-accent {
-  background: linear-gradient(180deg, #a04cc0, #7b0099) !important;
-  border: 1px solid #4a0060;
+  background: #fff !important;
+  color: #000 !important;
+  border: 1px solid #fff;
   border-radius: 3px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
-.retro #comments h2::before {
-  content: "✎ ";
-}
-.retro #comments h2 {
-  background: linear-gradient(180deg, #ede4f8, #e2d6f2);
-  border-left: 6px solid var(--accent);
-  padding: 0.25rem 0.75rem;
-  font-size: 1.05rem;
+.retro #newsletter input {
+  background: #000;
+  color: #fff;
+  border-color: #9a9a9a;
 }
 .retro .retro-marquee {
   display: block;
-}
-.retro .cursor-blink {
-  display: none;
 }
 
 /* welcome marquee: only visible in retro */
@@ -388,11 +470,13 @@
   display: none;
   overflow: hidden;
   white-space: nowrap;
-  background: #fff8c2;
-  border: 1px solid #e3d26f;
-  color: #7b0099;
+  background: #000;
+  border: 1px solid #9a9a9a;
+  border-radius: 6px;
+  color: #ffe66d;
   font-size: 12px;
-  padding: 2px 0;
+  padding: 3px 0;
+  margin-top: 0.75rem;
 }
 .retro-marquee > span {
   display: inline-block;
@@ -408,5 +492,114 @@
   .retro-marquee > span {
     animation: none;
     padding-left: 0.5rem;
+  }
+}
+
+/* ---------- Retro: fonts everywhere (web-safe, Vietnamese-capable) ---------- */
+.retro,
+.retro body,
+.retro h1,
+.retro h2,
+.retro h3,
+.retro h4,
+.retro p,
+.retro a,
+.retro li,
+.retro span,
+.retro button,
+.retro input,
+.retro time,
+.retro .app-prose,
+.retro .app-prose *:not(code):not(pre):not(pre *) {
+  font-family: Verdana, Tahoma, "Segoe UI", Arial, sans-serif;
+}
+.retro h1,
+.retro h2,
+.retro h3 {
+  font-family: Verdana, Tahoma, sans-serif;
+}
+.retro code,
+.retro pre,
+.retro pre *,
+.retro [data-view-counter] [data-views] {
+  font-family: "Courier New", Courier, monospace;
+}
+
+/* ---------- Retro effects: stars, snow, sparkles ---------- */
+#retro-stars,
+#retro-snow {
+  display: none;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.retro #retro-stars,
+.retro #retro-snow {
+  display: block;
+}
+.retro #retro-snow {
+  z-index: 40;
+}
+#retro-stars {
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, #fff 50%, transparent 51%),
+    radial-gradient(2px 2px at 120px 90px, #ffe66d 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 220px 40px, #fff 50%, transparent 51%),
+    radial-gradient(2px 2px at 320px 160px, #ff9de2 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 420px 70px, #fff 50%, transparent 51%),
+    radial-gradient(2px 2px at 520px 200px, #ffe66d 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 620px 120px, #fff 50%, transparent 51%),
+    radial-gradient(2px 2px at 720px 30px, #9be7ff 50%, transparent 51%);
+  background-size: 760px 240px;
+  animation: twinkle 2.4s ease-in-out infinite alternate;
+  opacity: 0.8;
+}
+@keyframes twinkle {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 0.95;
+  }
+}
+.retro header,
+.retro main,
+.retro footer {
+  position: relative;
+  z-index: 1;
+}
+.retro-sparkle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 50;
+  font-size: 14px;
+  line-height: 1;
+  animation: sparkle-fade 0.9s ease-out forwards;
+  text-shadow: 0 0 4px currentColor;
+}
+@keyframes sparkle-fade {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(18px) scale(0.3) rotate(90deg);
+  }
+}
+
+/* blinking "new" tag in retro */
+.retro #featured h2::after {
+  content: " NEW!";
+  color: #ff1493;
+  font-size: 0.7em;
+  animation: blink 1s steps(1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  #retro-stars,
+  .retro .hero-name,
+  .retro #featured h2::after {
+    animation: none;
   }
 }

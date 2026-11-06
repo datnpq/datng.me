@@ -1,0 +1,130 @@
+---
+/**
+ * Yahoo! 360-era effects, active only while <html class="retro">:
+ * falling snow (canvas), twinkling stars (CSS), sparkle cursor trail.
+ * Respects prefers-reduced-motion. Toggled live when the theme changes.
+ */
+---
+
+<div id="retro-stars" aria-hidden="true"></div>
+<canvas id="retro-snow" aria-hidden="true"></canvas>
+
+<script>
+  type Flake = {
+    x: number;
+    y: number;
+    r: number;
+    s: number;
+    w: number;
+    p: number;
+  };
+
+  let raf = 0;
+  let flakes: Flake[] = [];
+  let canvas: HTMLCanvasElement | null = null;
+  let ctx: CanvasRenderingContext2D | null = null;
+  let onMove: ((e: MouseEvent) => void) | null = null;
+  let lastSparkle = 0;
+
+  const reduced = () =>
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const isRetro = () => document.documentElement.classList.contains("retro");
+
+  function resize() {
+    if (!canvas) return;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function makeFlakes() {
+    const n = Math.min(90, Math.floor(window.innerWidth / 14));
+    flakes = Array.from({ length: n }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: 1 + Math.random() * 2.5,
+      s: 0.4 + Math.random() * 1.1,
+      w: Math.random() * Math.PI * 2,
+      p: 0.3 + Math.random() * 0.6,
+    }));
+  }
+
+  function draw() {
+    if (!ctx || !canvas) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(255,255,255,0.9)";
+    for (const f of flakes) {
+      ctx.globalAlpha = f.p;
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+      ctx.fill();
+      f.y += f.s;
+      f.w += 0.01;
+      f.x += Math.sin(f.w) * 0.4;
+      if (f.y > canvas.height + 5) {
+        f.y = -5;
+        f.x = Math.random() * canvas.width;
+      }
+    }
+    ctx.globalAlpha = 1;
+    raf = requestAnimationFrame(draw);
+  }
+
+  function sparkle(x: number, y: number) {
+    const el = document.createElement("span");
+    el.className = "retro-sparkle";
+    el.textContent = ["✦", "✧", "★", "·"][Math.floor(Math.random() * 4)];
+    el.style.left = `${x + (Math.random() * 16 - 8)}px`;
+    el.style.top = `${y + (Math.random() * 16 - 8)}px`;
+    el.style.color = ["#ffd700", "#ff69b4", "#7b0099", "#00bfff"][
+      Math.floor(Math.random() * 4)
+    ];
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 900);
+  }
+
+  function start() {
+    if (raf || reduced()) return;
+    canvas = document.getElementById("retro-snow") as HTMLCanvasElement | null;
+    ctx = canvas?.getContext("2d") ?? null;
+    if (!canvas || !ctx) return;
+    resize();
+    makeFlakes();
+    window.addEventListener("resize", resize);
+    raf = requestAnimationFrame(draw);
+    onMove = e => {
+      const now = performance.now();
+      if (now - lastSparkle < 40) return;
+      lastSparkle = now;
+      sparkle(e.clientX, e.clientY);
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+  }
+
+  function stop() {
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    window.removeEventListener("resize", resize);
+    if (onMove) window.removeEventListener("mousemove", onMove);
+    onMove = null;
+    if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function sync() {
+    if (isRetro()) start();
+    else stop();
+  }
+
+  let observer: MutationObserver | null = null;
+  function setup() {
+    sync();
+    observer?.disconnect();
+    observer = new MutationObserver(sync);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class", "data-theme"],
+    });
+  }
+
+  document.addEventListener("astro:page-load", setup);
+  document.addEventListener("astro:before-swap", stop);
+</script>

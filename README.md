@@ -58,13 +58,13 @@ Repo `datnpq/datng.me` đã bật Discussions. Cần cài app https://github.com
 
 ## Theme
 
-Nút đổi giao diện xoay vòng Sáng → Tối → **Retro 360** (tím Yahoo, Tahoma, bevel, marquee). CSS retro nằm cuối `src/styles/global.css`, biến màu trong `src/styles/theme.css`.
+Nút đổi giao diện xoay vòng Sáng → Tối → **Retro 360** (layout Yahoo! 360: nền đen, khung viền trắng, Blast bong bóng, Verdana, marquee, tuyết rơi, sao nhấp nháy, đuôi chuột lấp lánh). CSS retro nằm cuối `src/styles/global.css`, hiệu ứng trong `src/components/RetroEffects.astro`. Tự tắt hiệu ứng khi người xem bật giảm chuyển động.
 
 ## Blast, Mood, bài hát tuần, lưu bút
 
 - `src/content/pages/now.md` frontmatter: `blast`, `mood` hiện ở hero trang chủ; `song` (link YouTube) + `songTitle` hiện ở trang /now.
 - `/guestbook/` là một thread Giscus chung (mapping `specific`, term `guestbook`).
-- Cloudflare Web Analytics bật cho datng.me theo kiểu automatic setup (không cần script trong code).
+- Cloudflare Web Analytics: beacon chèn trong `src/layouts/Layout.astro` (token công khai), xem số liệu ở Dashboard → Web analytics → datng.me.
 
 ## Viết bài bằng giao diện web (Sveltia CMS)
 
