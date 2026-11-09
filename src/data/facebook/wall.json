@@ -1,0 +1,66 @@
+{
+  "sample": true,
+  "profile": {
+    "name": "Đạt Ng.",
+    "username": "datnpq",
+    "status": "đang dựng lại cái tường này từ file .zip...",
+    "joined": "2009-12-01",
+    "disabledAt": "2026-11-06",
+    "info": [
+      ["Tham gia", "Tháng 12, 2009"],
+      ["Trang web", "https://datng.me"],
+      ["Yahoo!", "npqd2010"]
+    ]
+  },
+  "friends": {
+    "total": 6,
+    "list": [
+      { "name": "Bạn A." },
+      { "name": "Bạn B." },
+      { "name": "Bạn C." },
+      { "name": "Bạn D." },
+      { "name": "Bạn E." },
+      { "name": "Bạn G." }
+    ]
+  },
+  "posts": [
+    {
+      "id": "sample-4",
+      "date": "2026-11-06T09:00:00+07:00",
+      "kind": "event",
+      "text": "Tài khoản bị vô hiệu hoá. (bài mẫu — sẽ thay bằng dữ liệu thật)",
+      "images": [],
+      "likes": 0,
+      "comments": []
+    },
+    {
+      "id": "sample-3",
+      "date": "2012-05-20T21:15:00+07:00",
+      "kind": "status",
+      "text": "Bài mẫu số 3: trạng thái có ảnh sẽ hiện ở đây.",
+      "images": [],
+      "likes": 4,
+      "comments": [
+        { "author": "Bạn A.", "text": "Bình luận mẫu", "date": "2012-05-20T21:20:00+07:00" }
+      ]
+    },
+    {
+      "id": "sample-2",
+      "date": "2010-08-14T23:42:00+07:00",
+      "kind": "status",
+      "text": "Bài mẫu số 2: mấy dòng status thời sinh viên.",
+      "images": [],
+      "likes": 2,
+      "comments": []
+    },
+    {
+      "id": "sample-1",
+      "date": "2009-12-01T19:30:00+07:00",
+      "kind": "event",
+      "text": "Tham gia Facebook. (bài mẫu)",
+      "images": [],
+      "likes": 0,
+      "comments": []
+    }
+  ]
+}

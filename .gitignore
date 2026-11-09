@@ -42,3 +42,8 @@ public/pagefind/
 
 # lockfile omitted: npm on Windows cannot record Linux-only optional deps that Workers Builds needs
 package-lock.json
+
+# raw Facebook export: never commit (repo is public)
+facebook-*/
+facebook-*.zip
+fb-export/
