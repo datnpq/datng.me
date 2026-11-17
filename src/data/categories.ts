@@ -36,6 +36,12 @@ export const CATEGORIES: Category[] = [
     desc: "Nginx, reverse proxy, HTTPS miễn phí với Let's Encrypt.",
   },
   {
+    slug: "wordpress",
+    name: "WordPress",
+    icon: "📝",
+    desc: "Cài WordPress trên VPS, chọn theme, plugin cần thiết, tăng tốc và giữ an toàn.",
+  },
+  {
     slug: "bao-mat-sao-luu",
     name: "Bảo mật & sao lưu",
     icon: "🔒",
