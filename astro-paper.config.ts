@@ -32,7 +32,7 @@ export default defineAstroPaperConfig({
   socials: [
     { name: "github", url: "https://github.com/datnpq", linkTitle: "Đạt trên GitHub" },
     { name: "linkedin", url: "https://www.linkedin.com/in/datnpq/", linkTitle: "Đạt trên LinkedIn" },
-    { name: "mail", url: "mailto:dat.ngo2994@gmail.com", linkTitle: "Gửi email cho Đạt" },
+    { name: "mail", url: "/#newsletter", linkTitle: "Đăng ký nhận bài mới qua email" },
   ],
   shareLinks: [
     { name: "facebook", url: "https://www.facebook.com/sharer.php?u=", linkTitle: "Chia sẻ lên Facebook" },

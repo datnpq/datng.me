@@ -11,7 +11,7 @@ Mục đích chính của blog là để mình tra cứu lại khi cần. Nếu 
 
 ## Liên hệ
 
-- Email: dat.ngo2994@gmail.com
+- Nhận bài mới: [đăng ký newsletter](/#newsletter), có bài là mình gửi email.
 - GitHub: [github.com/datnpq](https://github.com/datnpq)
 
 ## Về blog này
