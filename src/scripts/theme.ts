@@ -6,10 +6,8 @@ const ORDER = [LIGHT, DARK, RETRO];
 
 function getPreferredTheme(): string {
   const stored = localStorage.getItem(THEME_KEY);
-  if (stored) return stored;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? DARK
-    : LIGHT;
+  // New visitors start on the Retro 360 theme.
+  return stored ?? RETRO;
 }
 
 // Reuse the value already set by the inline FOUC-prevention script if available.

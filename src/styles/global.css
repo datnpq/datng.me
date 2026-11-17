@@ -1165,3 +1165,9 @@
 .retro .entry-no {
   margin-bottom: 0.25rem;
 }
+
+/* Mobile: never let a wide child make the page pan sideways. */
+html,
+body {
+  overflow-x: clip;
+}

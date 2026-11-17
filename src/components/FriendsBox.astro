@@ -8,10 +8,10 @@ import { FRIENDS } from "@/data/friends";
   <p class="text-muted-foreground mt-1 text-sm">
     Blog bạn bè và những nơi mình hay ghé.
   </p>
-  <ul class="mt-4 grid gap-3 sm:grid-cols-2">
+  <ul class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
     {
       FRIENDS.map(f => (
-        <li>
+        <li class="min-w-0">
           <a
             href={f.url}
             target="_blank"
