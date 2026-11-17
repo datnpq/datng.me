@@ -2,6 +2,7 @@
 title: Cách viết một bài mới trên blog này
 pubDatetime: 2026-11-05T20:00:00+07:00
 draft: false
+category: web-tinh-serverless
 tags:
   - blogging
   - astro

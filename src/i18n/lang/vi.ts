@@ -5,6 +5,7 @@ export default {
     home: "Trang chủ",
     posts: "Bài viết",
     tags: "Chủ đề",
+    tech: "Kỹ thuật",
     about: "Giới thiệu",
     archives: "Lưu trữ",
     search: "Tìm kiếm",

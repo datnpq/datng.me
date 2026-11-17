@@ -2,6 +2,7 @@
 title: "Viết blog bằng điện thoại với Sveltia CMS, không cần mở VS Code"
 pubDatetime: 2026-11-06T22:00:00+07:00
 draft: false
+category: web-tinh-serverless
 tags:
   - astro
   - blogging

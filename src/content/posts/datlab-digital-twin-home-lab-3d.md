@@ -3,6 +3,7 @@ title: 'Từ "vẽ giùm cái sơ đồ mạng" đến một cái game: chuyện
 pubDatetime: 2026-11-17T21:00:00+07:00
 featured: true
 draft: false
+category: home-lab
 tags:
   - home-lab
   - digital-twin

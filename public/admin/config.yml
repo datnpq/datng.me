@@ -62,6 +62,22 @@ collections:
         }
       - { name: tags, label: Chủ đề, widget: list, default: [others] }
       - {
+          name: category,
+          label: Mục Kỹ thuật,
+          widget: select,
+          required: false,
+          options:
+            [
+              { label: "Nhập môn", value: nhap-mon },
+              { label: "VPS & Linux", value: vps-linux },
+              { label: "Tên miền & DNS", value: ten-mien-dns },
+              { label: "Web server", value: web-server },
+              { label: "Bảo mật & sao lưu", value: bao-mat-sao-luu },
+              { label: "Web tĩnh & serverless", value: web-tinh-serverless },
+              { label: "Home lab & self-host", value: home-lab },
+            ],
+        }
+      - {
           name: featured,
           label: Nổi bật,
           widget: boolean,

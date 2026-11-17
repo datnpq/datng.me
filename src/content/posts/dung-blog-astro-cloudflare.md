@@ -2,6 +2,7 @@
 title: Dựng blog cá nhân với Astro và Cloudflare trong một buổi chiều
 pubDatetime: 2026-11-06T10:00:00+07:00
 draft: false
+category: web-tinh-serverless
 tags:
   - astro
   - cloudflare

@@ -1,4 +1,5 @@
 ---
+import { getCategory } from "@/data/categories";
 import { type CollectionEntry, getCollection, render } from "astro:content";
 import PostLayout from "@/layouts/PostLayout.astro";
 import Header from "@/components/Header.astro";
@@ -85,11 +86,13 @@ const {
   modDatetime,
   timezone,
   tags,
+  category,
   hideEditPost,
   hideToc,
 } = post.data;
 
 const { Content, headings } = await render(post);
+const cat = getCategory(category);
 const tocHeadings = config.features.toc && !hideToc ? headings : [];
 
 let ogImageUrl: string | undefined;
@@ -141,6 +144,15 @@ const ogImage = ogImageUrl
       {title}
     </h1>
 
+    {
+      cat && (
+        <p class="text-muted-foreground mt-1 text-sm">
+          📚 <a href="/ky-thuat/" class="hover:text-accent underline-offset-4 hover:underline">Kỹ thuật</a>
+          {" › "}
+          <a href={`/ky-thuat/${cat.slug}/`} class="text-accent underline-offset-4 hover:underline">{cat.name}</a>
+        </p>
+      )
+    }
     <div class="my-2 flex flex-wrap items-center gap-2">
       <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
       <span aria-hidden="true" class="text-muted-foreground">|</span>

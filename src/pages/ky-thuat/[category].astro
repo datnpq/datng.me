@@ -1,0 +1,49 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import Card from "@/components/Card.astro";
+import { CATEGORIES, type Category } from "@/data/categories";
+import { getCategoryPosts } from "@/utils/getCategoryPosts";
+import config from "@/config";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+  return CATEGORIES.map(category => ({
+    params: { category: category.slug },
+    props: { category, posts: getCategoryPosts(posts, category.slug) },
+  }));
+}
+
+type Props = { category: Category; posts: Awaited<ReturnType<typeof getCollection<"posts">>> };
+const { category, posts } = Astro.props;
+---
+
+<Layout title={`${category.name} | Kỹ thuật | ${config.site.title}`} description={category.desc}>
+  <Header />
+  <Breadcrumb />
+  <Main pageTitle={`${category.icon} ${category.name}`} pageDesc={category.desc}>
+    {
+      posts.length ? (
+        <ol>
+          {posts.map(p => (
+            <Card {...p} />
+          ))}
+        </ol>
+      ) : (
+        <p class="text-muted-foreground mt-8 italic">
+          Mục này đang viết. <a href="/#newsletter" class="text-accent underline">Đăng ký newsletter</a> để nhận bài khi có.
+        </p>
+      )
+    }
+    <p class="mt-8">
+      <a href="/ky-thuat/" class="text-accent decoration-dashed underline-offset-4 hover:underline">
+        ← Tất cả mục Kỹ thuật
+      </a>
+    </p>
+  </Main>
+  <Footer />
+</Layout>
