@@ -3,7 +3,7 @@ title: "Now"
 description: "Dạo này mình đang làm gì."
 blast: "Blog mới lên sóng, đang viết bài kể chuyện 18 năm làm web 🚀"
 mood: "😎 hứng khởi"
-song: "https://www.youtube.com/watch?v=0kQp7UhKUXA"
+song: "https://www.youtube.com/watch?v=2Zxo5EfuM0s"
 songTitle: "Craig David – Seven Days"
 ---
 
