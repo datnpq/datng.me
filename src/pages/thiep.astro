@@ -1,0 +1,185 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+
+const CARDS = [
+  { id: "sinh-nhat", label: "🎂 Sinh nhật", title: "Chúc mừng sinh nhật!" },
+  { id: "iu", label: "💌 Gửi người thương", title: "Gửi người thương" },
+  { id: "ngu-ngon", label: "🌙 Chúc ngủ ngon", title: "Ngủ ngon nha" },
+  { id: "xin-loi", label: "🙏 Xin lỗi", title: "Cho mình xin lỗi" },
+  { id: "cam-on", label: "🌻 Cảm ơn", title: "Cảm ơn bạn nhiều" },
+  { id: "thay-co", label: "📚 Thầy cô", title: "Tri ân thầy cô" },
+  { id: "giang-sinh", label: "🎄 Giáng sinh", title: "Merry Christmas" },
+  { id: "tet", label: "🧧 Năm mới", title: "Chúc mừng năm mới" },
+];
+---
+
+<Layout
+  title={`Gửi thiệp | ${config.site.title}`}
+  description="Làm thiệp điện tử kiểu 2008: chọn mẫu, viết lời chúc, gửi link cho người nhận."
+>
+  <Header />
+  <Breadcrumb />
+  <Main
+    pageTitle="💌 Gửi thiệp"
+    pageDesc="Chọn mẫu, viết vài dòng, copy link gửi qua Messenger hay Zalo. Lời chúc nằm luôn trong link, blog này không lưu lại gì."
+  >
+    <div id="viewer" class="mt-6" hidden>
+      <div id="card" class="card9x">
+        <div class="card9x-icon" id="card-icon"></div>
+        <h2 id="card-title"></h2>
+        <p class="card9x-to">Gửi: <b id="card-to"></b></p>
+        <p id="card-msg" class="card9x-msg"></p>
+        <p class="card9x-from">~ <span id="card-from"></span> ~</p>
+      </div>
+      <p class="mt-4 text-center">
+        <a href="/thiep/" class="btn9x">Làm thiệp tặng lại 💌</a>
+      </p>
+    </div>
+
+    <form id="maker" class="win9x mt-6">
+      <div class="win9x-title">✉️ Làm thiệp mới</div>
+      <div class="win9x-body grid gap-3">
+        <fieldset>
+          <legend class="mb-2 text-sm font-semibold">Chọn mẫu</legend>
+          <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {
+              CARDS.map((c, i) => (
+                <label class="flex items-center gap-2 text-sm">
+                  <input type="radio" name="t" value={c.id} checked={i === 0} class="!w-auto" />
+                  {c.label}
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+        <label class="text-sm">Người nhận
+          <input name="to" maxlength="40" required placeholder="vd: Bé Na" />
+        </label>
+        <label class="text-sm">Lời chúc
+          <textarea name="msg" rows="4" maxlength="400" required placeholder="Viết vài dòng thật lòng…"></textarea>
+        </label>
+        <label class="text-sm">Người gửi
+          <input name="from" maxlength="40" required placeholder="vd: Anh Hai" />
+        </label>
+        <div class="flex flex-wrap gap-2">
+          <button class="btn9x" type="submit">Xem trước & lấy link</button>
+        </div>
+        <div id="share" class="grid gap-2" hidden>
+          <input id="share-url" readonly />
+          <div class="flex flex-wrap gap-2">
+            <button id="share-copy" class="btn9x" type="button">Copy link</button>
+            <a id="share-open" class="btn9x" href="#">Mở thiệp</a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </Main>
+  <Footer />
+</Layout>
+
+<script define:vars={{ CARDS }}>
+  const ICONS = {
+    "sinh-nhat": "🎂🎈🎁",
+    iu: "💖💌💖",
+    "ngu-ngon": "🌙⭐💤",
+    "xin-loi": "🥺🙏🌷",
+    "cam-on": "🌻💛🌻",
+    "thay-co": "📚🌹✏️",
+    "giang-sinh": "🎄🎅❄️",
+    tet: "🧧🌸🎆",
+  };
+  const enc = obj => {
+    const bytes = new TextEncoder().encode(JSON.stringify(obj));
+    let bin = "";
+    bytes.forEach(b => (bin += String.fromCharCode(b)));
+    return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  };
+  const dec = s => {
+    const bin = atob(s.replace(/-/g, "+").replace(/_/g, "/"));
+    return JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0))));
+  };
+  const clip = (v, n) => String(v ?? "").slice(0, n);
+
+  const show = data => {
+    const card = CARDS.find(c => c.id === data.t) ?? CARDS[0];
+    document.getElementById("card").dataset.t = card.id;
+    document.getElementById("card-icon").textContent = ICONS[card.id];
+    document.getElementById("card-title").textContent = card.title;
+    document.getElementById("card-to").textContent = clip(data.to, 40);
+    document.getElementById("card-msg").textContent = clip(data.msg, 400);
+    document.getElementById("card-from").textContent = clip(data.from, 40);
+    document.getElementById("viewer").hidden = false;
+  };
+
+  const render = () => {
+    const m = location.hash.match(/^#c=([\w-]+)$/);
+    if (!m) return;
+    try {
+      show(dec(m[1]));
+      document.getElementById("maker").hidden = true;
+    } catch {}
+  };
+  render();
+  window.addEventListener("hashchange", () => {
+    document.getElementById("maker").hidden = false;
+    document.getElementById("viewer").hidden = true;
+    render();
+  });
+
+  const form = document.getElementById("maker");
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const f = new FormData(form);
+    const data = { t: f.get("t"), to: clip(f.get("to"), 40), msg: clip(f.get("msg"), 400), from: clip(f.get("from"), 40) };
+    const url = `${location.origin}/thiep/#c=${enc(data)}`;
+    show(data);
+    document.getElementById("share").hidden = false;
+    document.getElementById("share-url").value = url;
+    document.getElementById("share-open").href = url;
+    document.getElementById("viewer").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  document.getElementById("share-copy").addEventListener("click", async e => {
+    try {
+      await navigator.clipboard.writeText(document.getElementById("share-url").value);
+      e.target.textContent = "Đã copy ✓";
+      setTimeout(() => (e.target.textContent = "Copy link"), 1200);
+    } catch {}
+  });
+</script>
+
+<style>
+  .card9x {
+    --c1: #ff9a9e;
+    --c2: #fecfef;
+    max-width: 30rem;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem;
+    text-align: center;
+    color: #3a0d24;
+    border: 3px double #fff;
+    outline: 2px solid var(--c1);
+    background:
+      radial-gradient(circle at 20% 20%, #fff8 0 2px, transparent 3px) 0 0 / 28px 28px,
+      linear-gradient(135deg, var(--c1), var(--c2));
+    font-family: "Comic Sans MS", "Comic Neue", Verdana, sans-serif;
+    animation: card-in 0.6s ease-out both;
+  }
+  .card9x[data-t="ngu-ngon"] { --c1: #2b5876; --c2: #4e4376; color: #fff; }
+  .card9x[data-t="xin-loi"] { --c1: #a1c4fd; --c2: #c2e9fb; color: #0d2a4a; }
+  .card9x[data-t="cam-on"] { --c1: #f6d365; --c2: #fda085; }
+  .card9x[data-t="thay-co"] { --c1: #84fab0; --c2: #8fd3f4; color: #0b3a2a; }
+  .card9x[data-t="giang-sinh"] { --c1: #c31432; --c2: #1e5631; color: #fff; }
+  .card9x[data-t="tet"] { --c1: #d31027; --c2: #ea384d; color: #fff6d5; }
+  .card9x-icon { font-size: 2.5rem; letter-spacing: 0.4rem; }
+  .card9x h2 { margin: 0.5rem 0; font-size: 1.6rem; font-weight: 700; }
+  .card9x-to { font-size: 0.95rem; }
+  .card9x-msg { margin: 1rem 0; white-space: pre-line; font-size: 1.05rem; line-height: 1.6; overflow-wrap: anywhere; }
+  .card9x-from { font-style: italic; }
+  @keyframes card-in { from { transform: scale(0.9) rotate(-2deg); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .card9x { animation: none; } }
+</style>

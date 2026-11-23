@@ -120,6 +120,36 @@ const rssHref = getAssetPath("rss.xml");
   <body
     class="bg-background font-app text-foreground selection:bg-accent/75 selection:text-accent-foreground flex min-h-svh flex-col"
   >
+    <script is:inline>
+      // Retro only: fake "Đang tải trang..." bar, once per browser session.
+      (function () {
+        try {
+          if (!document.documentElement.classList.contains("retro")) return;
+          if (sessionStorage.getItem("loader9x")) return;
+          if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+          sessionStorage.setItem("loader9x", "1");
+        } catch (e) {
+          return;
+        }
+        var el = document.createElement("div");
+        el.id = "loader9x";
+        el.innerHTML =
+          '<div style="text-align:center">Đang tải trang... <b id="loader9x-p">0%</b><div class="bar"><span></span></div><small>Kết nối 56Kbps, vui lòng chờ trong giây lát</small></div>';
+        document.body.appendChild(el);
+        var bar = el.querySelector(".bar > span"), pct = el.querySelector("#loader9x-p"), p = 0;
+        var t = setInterval(function () {
+          p = Math.min(100, p + 7 + Math.floor(Math.random() * 12));
+          bar.style.width = p + "%";
+          pct.textContent = p + "%";
+          if (p >= 100) {
+            clearInterval(t);
+            el.style.opacity = "0";
+            setTimeout(function () { el.remove(); }, 320);
+          }
+        }, 70);
+        el.addEventListener("click", function () { p = 100; });
+      })();
+    </script>
     <slot />
     <RetroEffects />
     <MusicPlayer />

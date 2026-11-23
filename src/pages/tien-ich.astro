@@ -1,0 +1,445 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+---
+
+<Layout
+  title={`Tiện ích 9x | ${config.site.title}`}
+  description="Góc tiện ích kiểu web 9x: đồng hồ, lịch âm, xem tuổi con giáp, bói độ hợp nhau, chữ teen, tạo nick Yahoo, cờ caro."
+>
+  <Header />
+  <Breadcrumb />
+  <Main
+    pageTitle="~*~ Tiện ích 9x ~*~"
+    pageDesc="Mấy món đồ chơi mà trang cá nhân nào hồi 2008 cũng có. Chạy hết trên trình duyệt của bạn, không gửi gì đi đâu."
+  >
+    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <!-- Clock + lunar calendar -->
+      <section class="win9x">
+        <div class="win9x-title">🕐 Đồng hồ & lịch âm</div>
+        <div class="win9x-body text-center">
+          <p id="clock" class="font-mono text-3xl font-bold tracking-widest">--:--:--</p>
+          <p id="solar" class="mt-1 text-sm"></p>
+          <p id="lunar" class="text-accent mt-1 text-sm font-semibold"></p>
+          <p id="canchi" class="text-muted-foreground mt-1 text-xs"></p>
+        </div>
+      </section>
+
+      <!-- Visitor info -->
+      <section class="win9x">
+        <div class="win9x-title">💻 Thông tin của bạn</div>
+        <div class="win9x-body">
+          <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
+            <dt>IP:</dt><dd>127.0.0.1 <span class="text-muted-foreground">(đùa đó, bí mật)</span></dd>
+            <dt>Trình duyệt:</dt><dd id="ua-browser">?</dd>
+            <dt>Hệ điều hành:</dt><dd id="ua-os">?</dd>
+            <dt>Màn hình:</dt><dd id="ua-screen">?</dd>
+            <dt>Ở lại đây:</dt><dd id="ua-time">0 giây</dd>
+          </dl>
+          <p class="text-muted-foreground mt-2 text-xs">
+            Trang được thiết kế tốt nhất ở độ phân giải 1024×768 😎
+          </p>
+        </div>
+      </section>
+
+      <!-- Zodiac -->
+      <section class="win9x">
+        <div class="win9x-title">🐉 Xem tuổi con giáp</div>
+        <div class="win9x-body">
+          <form id="zodiac-form" class="flex gap-2">
+            <input id="zodiac-year" type="number" inputmode="numeric" min="1900" max="2100" placeholder="Năm sinh, vd 1995" required />
+            <button class="btn9x flex-none" type="submit">Xem</button>
+          </form>
+          <p id="zodiac-out" class="mt-3 text-sm" aria-live="polite"></p>
+          <p class="text-muted-foreground mt-2 text-xs">
+            Tính theo năm âm lịch. Sinh tháng 1, 2 dương lịch thì có khi còn thuộc năm trước, nhớ coi lại ngày Tết năm đó.
+          </p>
+        </div>
+      </section>
+
+      <!-- Love match -->
+      <section class="win9x">
+        <div class="win9x-title">💘 Bói độ hợp nhau</div>
+        <div class="win9x-body">
+          <form id="love-form" class="grid gap-2">
+            <input id="love-a" placeholder="Tên bạn" maxlength="40" required />
+            <input id="love-b" placeholder="Tên người ấy" maxlength="40" required />
+            <button class="btn9x" type="submit">Bói liền 🔮</button>
+          </form>
+          <p id="love-out" class="mt-3 text-center text-sm" aria-live="polite"></p>
+          <p class="text-muted-foreground mt-1 text-xs">Bói cho vui. Cùng hai cái tên thì lần nào cũng ra cùng một số.</p>
+        </div>
+      </section>
+
+      <!-- Teen text -->
+      <section class="win9x">
+        <div class="win9x-title">✍️ Chữ teen</div>
+        <div class="win9x-body">
+          <textarea id="teen-in" rows="3" placeholder="Gõ chữ bình thường vào đây, vd: em yêu anh quá không biết làm sao"></textarea>
+          <div class="mt-2 flex flex-wrap gap-2">
+            <button class="btn9x" data-teen="teen" type="button">Teen hoá</button>
+            <button class="btn9x" data-teen="alt" type="button">ChỮ LoẠn</button>
+            <button class="btn9x" data-copy="teen-out" type="button">Copy</button>
+          </div>
+          <p id="teen-out" class="mt-3 min-h-6 text-sm break-words" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- Nick generator -->
+      <section class="win9x">
+        <div class="win9x-title">😎 Tạo nick Yahoo</div>
+        <div class="win9x-body">
+          <form id="nick-form" class="flex gap-2">
+            <input id="nick-name" placeholder="Tên, vd: Dat" maxlength="20" required />
+            <button class="btn9x flex-none" type="submit">Tạo</button>
+          </form>
+          <ul id="nick-out" class="mt-3 grid gap-1 text-sm"></ul>
+          <p class="text-muted-foreground mt-1 text-xs">Bấm vào nick để copy.</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Caro -->
+    <section class="win9x mt-4">
+      <div class="win9x-title">⭕ Cờ caro với máy</div>
+      <div class="win9x-body">
+        <div class="flex flex-wrap items-center justify-between gap-2 text-sm">
+          <p>Bạn: <b>X</b> · Máy: <b>O</b> · 5 ô liền là thắng.</p>
+          <p>Thắng <b id="caro-win">0</b> · Thua <b id="caro-lose">0</b></p>
+        </div>
+        <div id="caro" class="mx-auto mt-3 grid w-fit" role="grid" aria-label="Bàn cờ caro"></div>
+        <p id="caro-msg" class="mt-2 text-center text-sm font-semibold" aria-live="polite">Bạn đi trước.</p>
+        <p class="mt-2 text-center"><button id="caro-new" class="btn9x" type="button">Ván mới</button></p>
+      </div>
+    </section>
+
+    <p class="mt-6 text-sm">
+      Muốn gửi lời chúc cho ai? Qua <a href="/thiep/" class="text-accent underline">Gửi thiệp</a> 💌
+    </p>
+  </Main>
+  <Footer />
+</Layout>
+
+<style is:global>
+  #caro {
+    grid-template-columns: repeat(13, 1.6rem);
+    border: 1px solid var(--color-border);
+  }
+  #caro button {
+    width: 1.6rem;
+    height: 1.6rem;
+    border: 1px solid var(--color-border);
+    font: 700 0.95rem/1 Verdana, sans-serif;
+  }
+  #caro button[data-v="X"] {
+    color: #e0245e;
+  }
+  #caro button[data-v="O"] {
+    color: #1d9bf0;
+  }
+  #caro button.win {
+    background: #ffeb3b;
+    color: #000;
+  }
+  @media (max-width: 400px) {
+    #caro {
+      grid-template-columns: repeat(13, 1.45rem);
+    }
+    #caro button {
+      width: 1.45rem;
+      height: 1.45rem;
+    }
+  }
+</style>
+
+<script>
+  const $ = (id: string) => document.getElementById(id)!;
+  const CAN = ["Giáp", "Ất", "Bính", "Đinh", "Mậu", "Kỷ", "Canh", "Tân", "Nhâm", "Quý"];
+  const CHI = ["Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi"];
+  const CON = ["Chuột", "Trâu", "Hổ", "Mèo", "Rồng", "Rắn", "Ngựa", "Dê", "Khỉ", "Gà", "Chó", "Heo"];
+  const ICON = ["🐭", "🐮", "🐯", "🐱", "🐲", "🐍", "🐴", "🐐", "🐵", "🐔", "🐶", "🐷"];
+  const HANH = ["Kim", "Thủy", "Hỏa", "Thổ", "Mộc"];
+  const THU = ["Chủ nhật", "Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy"];
+  const TZ = "Asia/Ho_Chi_Minh";
+  const mod = (a: number, n: number) => ((a % n) + n) % n;
+
+  const yearCanChi = (y: number) => `${CAN[mod(y + 6, 10)]} ${CHI[mod(y + 8, 12)]}`;
+  // Nạp âm element: can value + chi value, wrapped to 1..5
+  const napAm = (y: number) => {
+    const c = Math.floor(mod(y + 6, 10) / 2) + 1;
+    const z = Math.floor(mod(y + 8, 12) / 2) % 3;
+    let s = c + z;
+    if (s > 5) s -= 5;
+    return HANH[s - 1];
+  };
+
+  // ---- clock + lunar
+  const vnParts = (d: Date) => {
+    const p = Object.fromEntries(
+      new Intl.DateTimeFormat("en-GB", { timeZone: TZ, year: "numeric", month: "numeric", day: "numeric", weekday: "short" })
+        .formatToParts(d)
+        .map(x => [x.type, x.value])
+    );
+    return { y: +p.year, m: +p.month, d: +p.day };
+  };
+  const lunar = (d: Date) => {
+    try {
+      const p = Object.fromEntries(
+        new Intl.DateTimeFormat("en-u-ca-chinese", { timeZone: TZ, year: "numeric", month: "numeric", day: "numeric" })
+          .formatToParts(d)
+          .map(x => [x.type, x.value])
+      );
+      const month = String(p.month);
+      return {
+        day: parseInt(String(p.day), 10),
+        month: parseInt(month, 10),
+        leap: /\D/.test(month),
+        year: parseInt(String(p.relatedYear ?? p.year), 10),
+      };
+    } catch {
+      return null;
+    }
+  };
+  let lastDay = "";
+  const tick = () => {
+    const now = new Date();
+    $("clock").textContent = new Intl.DateTimeFormat("vi-VN", { timeZone: TZ, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(now);
+    const s = vnParts(now);
+    const key = `${s.y}-${s.m}-${s.d}`;
+    if (key === lastDay) return;
+    lastDay = key;
+    const dow = new Date(Date.UTC(s.y, s.m - 1, s.d)).getUTCDay();
+    $("solar").textContent = `${THU[dow]}, ngày ${s.d} tháng ${s.m} năm ${s.y}`;
+    const l = lunar(now);
+    const jd = Date.UTC(s.y, s.m - 1, s.d) / 86400000 + 2440588;
+    if (l && !Number.isNaN(l.day)) {
+      $("lunar").textContent = `Âm lịch: ${l.day}/${l.month}${l.leap ? " (nhuận)" : ""} năm ${yearCanChi(l.year)}`;
+    }
+    $("canchi").textContent = `Ngày ${CAN[mod(jd + 9, 10)]} ${CHI[mod(jd + 1, 12)]}`;
+  };
+  tick();
+  setInterval(tick, 1000);
+
+  // ---- visitor info
+  const ua = navigator.userAgent;
+  const browser =
+    /Edg\//.test(ua) ? "Microsoft Edge" :
+    /OPR\//.test(ua) ? "Opera" :
+    /CocCoc/.test(ua) ? "Cốc Cốc" :
+    /Firefox\//.test(ua) ? "Firefox" :
+    /Chrome\//.test(ua) ? "Chrome" :
+    /Safari\//.test(ua) ? "Safari" : "Không rõ";
+  const os =
+    /iPhone|iPad/.test(ua) ? "iOS" :
+    /Android/.test(ua) ? "Android" :
+    /Windows/.test(ua) ? "Windows" :
+    /Mac OS X/.test(ua) ? "macOS" :
+    /Linux/.test(ua) ? "Linux" : "Không rõ";
+  $("ua-browser").textContent = `${browser} (chứ không phải IE 6 🙂)`;
+  $("ua-os").textContent = os;
+  $("ua-screen").textContent = `${screen.width}×${screen.height}`;
+  const t0 = Date.now();
+  setInterval(() => {
+    const s = Math.floor((Date.now() - t0) / 1000);
+    $("ua-time").textContent = s < 60 ? `${s} giây` : `${Math.floor(s / 60)} phút ${s % 60} giây`;
+  }, 1000);
+
+  // ---- zodiac
+  $("zodiac-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const y = parseInt(($("zodiac-year") as HTMLInputElement).value, 10);
+    if (!(y >= 1900 && y <= 2100)) return;
+    const i = mod(y + 8, 12);
+    $("zodiac-out").innerHTML = `<span class="text-4xl">${ICON[i]}</span><br>Năm <b>${y}</b> là năm <b>${yearCanChi(y)}</b>, tuổi con <b>${CON[i]}</b>, mệnh <b>${napAm(y)}</b>.`;
+  });
+
+  // ---- love match
+  const norm = (s: string) => s.normalize("NFC").toLowerCase().replace(/\s+/g, " ").trim();
+  const hash = (s: string) => {
+    let h = 2166136261;
+    for (const ch of s) h = Math.imul(h ^ ch.codePointAt(0)!, 16777619);
+    return h >>> 0;
+  };
+  $("love-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const a = norm(($("love-a") as HTMLInputElement).value);
+    const b = norm(($("love-b") as HTMLInputElement).value);
+    if (!a || !b) return;
+    const pct = 40 + (hash([a, b].sort().join("💘")) % 61);
+    const say =
+      pct >= 95 ? "Trời sinh một cặp. Cưới đi chờ chi! 💍" :
+      pct >= 85 ? "Hợp lắm luôn, nhắn tin ngay cho người ta đi 😍" :
+      pct >= 70 ? "Khá hợp, chịu khó đi xem phim vài lần nữa 🍿" :
+      pct >= 55 ? "Hơi lệch pha, cần cố gắng nhiều hơn 💪" :
+      "Thôi làm bạn đi cho lành 😅";
+    $("love-out").innerHTML = `<span class="text-accent text-3xl font-bold">${pct}%</span><br>${say}`;
+  });
+
+  // ---- teen text
+  // Whole-word rules first (Unicode-aware), then letter-level ones.
+  const W = (w: string) => new RegExp(`(?<!\\p{L})${w}(?!\\p{L})`, "gu");
+  const TEEN: [RegExp, string][] = [
+    ...([
+      ["không", "hok"], ["biết", "bít"], ["yêu", "iu"], ["được", "đc"], ["vậy", "zậy"],
+      ["với", "vs"], ["thôi", "thui"], ["rồi", "rùi"], ["quá", "wá"], ["anh", "a"],
+      ["em", "e"], ["gì", "j"], ["chồng", "ck"], ["vợ", "vk"],
+    ] as const).map(([a, b]) => [W(a), b] as [RegExp, string]),
+    [/qu/g, "w"], [/ph/g, "f"], [/gi/g, "j"], [/d/g, "z"], [/ch(?!\p{L})/gu, "ck"],
+  ];
+  const toTeen = (s: string) => {
+    let out = s.toLowerCase();
+    for (const [re, to] of TEEN) out = out.replace(re, to);
+    return out;
+  };
+  const toAlt = (s: string) =>
+    [...s].map((c, i) => (i % 2 ? c.toLowerCase() : c.toUpperCase())).join("");
+  document.querySelectorAll<HTMLButtonElement>("[data-teen]").forEach(btn =>
+    btn.addEventListener("click", () => {
+      const v = ($("teen-in") as HTMLTextAreaElement).value;
+      $("teen-out").textContent = btn.dataset.teen === "alt" ? toAlt(v) : toTeen(v);
+    })
+  );
+
+  // ---- copy helper
+  const copyText = async (text: string, el: HTMLElement) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      const old = el.textContent;
+      el.textContent = "Đã copy ✓";
+      setTimeout(() => (el.textContent = old), 1000);
+    } catch {}
+  };
+  document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach(btn =>
+    btn.addEventListener("click", () => copyText($(btn.dataset.copy!).textContent ?? "", btn))
+  );
+
+  // ---- nick generator
+  const deco = [
+    (n: string) => `xX_${n}_Xx`,
+    (n: string) => `¸.•´¯\`•.¸ ${n} ¸.•´¯\`•.¸`,
+    (n: string) => `★彡 ${n} 彡★`,
+    (n: string) => `[¯¯${n}¯¯]`,
+    (n: string) => `~*~ ${toAlt(n)} ~*~`,
+    (n: string) => `${n.toLowerCase()}_kute_9x`,
+    (n: string) => `${n.toLowerCase()}_lanh_lung_${1990 + (hash(n) % 10)}`,
+    (n: string) => `hoang_tu_${n.toLowerCase()}_bang_gia`,
+  ];
+  $("nick-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const n = ($("nick-name") as HTMLInputElement).value.trim().replace(/\s+/g, "_");
+    if (!n) return;
+    const ul = $("nick-out");
+    ul.replaceChildren(
+      ...deco.map(f => {
+        const li = document.createElement("li");
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "hover:text-accent text-left break-all";
+        b.textContent = f(n);
+        b.addEventListener("click", () => copyText(f(n), b));
+        li.appendChild(b);
+        return li;
+      })
+    );
+  });
+
+  // ---- caro (13x13, simple scoring AI)
+  const N = 13;
+  const board = $("caro");
+  let cells: string[] = [];
+  let over = false;
+  let wins = 0, losses = 0;
+  try {
+    [wins, losses] = JSON.parse(localStorage.getItem("caro9x") ?? "[0,0]");
+  } catch {}
+  const save = () => {
+    $("caro-win").textContent = String(wins);
+    $("caro-lose").textContent = String(losses);
+    try { localStorage.setItem("caro9x", JSON.stringify([wins, losses])); } catch {}
+  };
+  const DIRS = [[1, 0], [0, 1], [1, 1], [1, -1]];
+  const at = (r: number, c: number) => (r < 0 || c < 0 || r >= N || c >= N ? "#" : cells[r * N + c]);
+  const line = (r: number, c: number, p: string) => {
+    for (const [dr, dc] of DIRS) {
+      const run = [[r, c]];
+      for (const s of [1, -1]) {
+        let rr = r + dr * s, cc = c + dc * s;
+        while (at(rr, cc) === p) { run.push([rr, cc]); rr += dr * s; cc += dc * s; }
+      }
+      if (run.length >= 5) return run;
+    }
+    return null;
+  };
+  const score = (r: number, c: number, p: string) => {
+    let total = 0;
+    for (const [dr, dc] of DIRS) {
+      let count = 1, open = 0;
+      for (const s of [1, -1]) {
+        let rr = r + dr * s, cc = c + dc * s;
+        while (at(rr, cc) === p) { count++; rr += dr * s; cc += dc * s; }
+        if (at(rr, cc) === "") open++;
+      }
+      if (count >= 5) total += 100000;
+      else if (open > 0) total += [0, 1, 10, 100, 1000][count] * (open === 2 ? 4 : 1);
+    }
+    return total;
+  };
+  const aiMove = () => {
+    let best = -1, bestI = -1;
+    for (let i = 0; i < N * N; i++) {
+      if (cells[i]) continue;
+      const r = Math.floor(i / N), c = i % N;
+      const s = score(r, c, "O") * 1.1 + score(r, c, "X") + (6 - Math.max(Math.abs(r - 6), Math.abs(c - 6))) * 0.1;
+      if (s > best) { best = s; bestI = i; }
+    }
+    return bestI;
+  };
+  const place = (i: number, p: string) => {
+    cells[i] = p;
+    const b = board.children[i] as HTMLButtonElement;
+    b.textContent = p;
+    b.dataset.v = p;
+    b.setAttribute("aria-label", `Ô ${Math.floor(i / N) + 1}-${(i % N) + 1}: ${p}`);
+    const run = line(Math.floor(i / N), i % N, p);
+    if (run) {
+      over = true;
+      run.forEach(([r, c]) => board.children[r * N + c].classList.add("win"));
+      if (p === "X") { wins++; $("caro-msg").textContent = "Bạn thắng! Đỉnh quá 🎉"; }
+      else { losses++; $("caro-msg").textContent = "Máy thắng rồi. Gỡ lại không? 😏"; }
+      save();
+    } else if (cells.every(Boolean)) {
+      over = true;
+      $("caro-msg").textContent = "Hoà!";
+    }
+  };
+  const newGame = () => {
+    cells = Array(N * N).fill("");
+    over = false;
+    $("caro-msg").textContent = "Bạn đi trước.";
+    board.replaceChildren(
+      ...cells.map((_, i) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.setAttribute("aria-label", `Ô ${Math.floor(i / N) + 1}-${(i % N) + 1}`);
+        b.addEventListener("click", () => {
+          if (over || cells[i]) return;
+          place(i, "X");
+          if (over) return;
+          $("caro-msg").textContent = "Máy đang nghĩ…";
+          setTimeout(() => {
+            place(aiMove(), "O");
+            if (!over) $("caro-msg").textContent = "Tới lượt bạn.";
+          }, 250);
+        });
+        return b;
+      })
+    );
+  };
+  $("caro-new").addEventListener("click", newGame);
+  save();
+  newGame();
+</script>

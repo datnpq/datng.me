@@ -22,7 +22,7 @@ const currentYear = new Date().getFullYear();
     class="border-border flex flex-col items-center justify-between border-t py-6 sm:flex-row-reverse sm:py-4"
   >
     <Socials />
-    <nav class="my-2 flex items-center gap-4 text-sm" aria-label="Trang phụ">
+    <nav class="my-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm" aria-label="Trang phụ">
       <a
         href="/now/"
         class="hover:text-accent underline decoration-dashed underline-offset-4"
@@ -39,6 +39,16 @@ const currentYear = new Date().getFullYear();
         >Lưu bút</a
       >
       <a
+        href="/tien-ich/"
+        class="hover:text-accent underline decoration-dashed underline-offset-4"
+        >Tiện ích</a
+      >
+      <a
+        href="/thiep/"
+        class="hover:text-accent underline decoration-dashed underline-offset-4"
+        >Gửi thiệp</a
+      >
+      <a
         href="/rss.xml"
         class="hover:text-accent underline decoration-dashed underline-offset-4"
         >RSS</a
@@ -52,5 +62,13 @@ const currentYear = new Date().getFullYear();
       <span class="hidden sm:inline">&nbsp;|&nbsp;</span>
       <span>{t.footer.allRightsReserved}</span>
     </div>
+  </div>
+  <div class="badges88" aria-label="Huy hiệu">
+    <span class="badge88" style="background:#000080">Made with<small>Notepad & Astro</small></span>
+    <span class="badge88" style="background:#c0c0c0;color:#000;border-color:#000">Best viewed<small>1024×768</small></span>
+    <span class="badge88 blink" style="background:#ff1493">♥ 9x forever ♥</span>
+    <span class="badge88" style="background:#ffd700;color:#000;background-image:repeating-linear-gradient(45deg,#000 0 6px,#ffd700 6px 12px)"><span style="background:#ffd700;padding:0 3px">Under<br>construction</span></span>
+    <span class="badge88" style="background:#006400">Y! Online<small>buzz tui đi</small></span>
+    <span class="badge88" style="background:#8b0000">No IE6<small>đã có Cốc Cốc</small></span>
   </div>
 </footer>
