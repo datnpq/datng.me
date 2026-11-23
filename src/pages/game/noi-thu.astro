@@ -1,0 +1,297 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+---
+
+<Layout
+  title={`Nối thú | ${config.site.title}`}
+  description="Game nối hai ô giống nhau, đường nối gấp khúc không quá 2 lần. Kiểu game giết thời gian ở quán net năm nào."
+>
+  <Header />
+  <Breadcrumb />
+  <Main
+    pageTitle="🐾 Nối thú"
+    pageDesc="Chọn hai ô cùng hình. Nối được khi đường nối không bị chắn và gấp khúc không quá 2 lần (được đi vòng ra ngoài viền). Hết giờ là thua."
+  >
+    <section class="win9x mt-6">
+      <div class="win9x-title">🐾 Nối thú</div>
+      <div class="win9x-body">
+        <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm">
+          <span>Màn: <b id="level">1</b></span>
+          <span>Điểm: <b id="score">0</b></span>
+          <span>Kỷ lục: <b id="best">0</b></span>
+          <span>⏱ <b id="time">0</b>s</span>
+        </div>
+        <div class="timebar mt-2"><span id="timebar"></span></div>
+        <div id="wrap" class="relative mx-auto mt-3 w-fit">
+          <div id="board" role="grid" aria-label="Bàn chơi"></div>
+          <svg id="path" class="pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true"></svg>
+        </div>
+        <p id="msg" class="mt-2 text-center text-sm font-semibold" aria-live="polite">Bấm hai ô giống nhau để nối.</p>
+        <div class="mt-2 flex flex-wrap justify-center gap-2">
+          <button id="hint" class="btn9x" type="button">💡 Gợi ý (<span id="hints">3</span>)</button>
+          <button id="shuffle" class="btn9x" type="button">🔀 Đảo (-20 điểm)</button>
+          <button id="restart" class="btn9x" type="button">Chơi lại</button>
+        </div>
+        <p class="text-muted-foreground mt-3 text-center text-xs">
+          Từ màn 2 trở đi, các ô sẽ trượt dồn về một phía mỗi khi bạn nối xong một cặp.
+        </p>
+      </div>
+    </section>
+  </Main>
+  <Footer />
+</Layout>
+
+<style is:global>
+  #board {
+    --cell: min(2.6rem, calc((100vw - 5.5rem) / 10));
+    display: grid;
+    grid-template-columns: repeat(10, var(--cell));
+    grid-template-rows: repeat(10, var(--cell));
+  }
+  #board button {
+    width: var(--cell);
+    height: var(--cell);
+    font-size: calc(var(--cell) * 0.62);
+    line-height: 1;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: #fffbe6;
+    transition: transform 0.1s;
+  }
+  #board .edge {
+    visibility: hidden;
+  }
+  #board button.empty {
+    visibility: hidden;
+  }
+  #board button.sel {
+    background: #ffd54f;
+    transform: scale(0.92);
+  }
+  #board button.hint {
+    animation: hint9x 0.5s ease-in-out 3;
+  }
+  @keyframes hint9x {
+    50% {
+      background: #81d4fa;
+    }
+  }
+  #path polyline {
+    fill: none;
+    stroke: #e91e63;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .timebar {
+    height: 8px;
+    border: 1px solid var(--color-border);
+  }
+  .timebar > span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #e53935, #fdd835, #43a047);
+  }
+</style>
+
+<script>
+  const ROWS = 8, COLS = 8, R = ROWS + 2, C = COLS + 2;
+  const ANIMALS = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷", "🐸", "🐵", "🐔"];
+  const $ = (id: string) => document.getElementById(id)!;
+  const board = $("board");
+  const svg = $("path") as unknown as SVGSVGElement;
+
+  let grid: (string | null)[] = [];
+  let level = 1, score = 0, hints = 3, timeLeft = 0, timeMax = 0, timer = 0;
+  let sel: number | null = null, busy = false;
+  let best = 0;
+  try { best = Number(localStorage.getItem("noithu9x") ?? 0); } catch {}
+  $("best").textContent = String(best);
+
+  const idx = (r: number, c: number) => r * C + c;
+  const rc = (i: number) => [Math.floor(i / C), i % C];
+  const inner = (r: number, c: number) => r > 0 && c > 0 && r <= ROWS && c <= COLS;
+
+  // BFS over (cell, direction) counting turns; returns the corner points of the path.
+  const DR = [-1, 0, 1, 0], DC = [0, 1, 0, -1];
+  function findPath(a: number, b: number): number[] | null {
+    const [ar, ac] = rc(a), [br, bc] = rc(b);
+    const turns = new Map<string, number>();
+    const q: { r: number; c: number; d: number; t: number; pts: number[] }[] = [];
+    for (let d = 0; d < 4; d++) q.push({ r: ar, c: ac, d, t: 0, pts: [a] });
+    while (q.length) {
+      const s = q.shift()!;
+      const nr = s.r + DR[s.d], nc = s.c + DC[s.d];
+      if (nr < 0 || nc < 0 || nr >= R || nc >= C) continue;
+      const ni = idx(nr, nc);
+      if (ni === b) return [...s.pts, b];
+      if (grid[ni] !== null) continue;
+      for (let d = 0; d < 4; d++) {
+        if ((d + 2) % 4 === s.d) continue;
+        const t = s.t + (d === s.d ? 0 : 1);
+        if (t > 2) continue;
+        const key = `${ni},${d}`;
+        if ((turns.get(key) ?? 9) <= t) continue;
+        turns.set(key, t);
+        q.push({ r: nr, c: nc, d, t, pts: d === s.d ? s.pts : [...s.pts, ni] });
+      }
+    }
+    void br; void bc;
+    return null;
+  }
+
+  function anyMove(): [number, number] | null {
+    const cells = grid.map((v, i) => (v ? i : -1)).filter(i => i >= 0);
+    for (let x = 0; x < cells.length; x++)
+      for (let y = x + 1; y < cells.length; y++)
+        if (grid[cells[x]] === grid[cells[y]] && findPath(cells[x], cells[y])) return [cells[x], cells[y]];
+    return null;
+  }
+
+  function shuffleTiles() {
+    const cells = grid.map((v, i) => (v ? i : -1)).filter(i => i >= 0);
+    const vals = cells.map(i => grid[i]);
+    do {
+      for (let i = vals.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [vals[i], vals[j]] = [vals[j], vals[i]];
+      }
+      cells.forEach((c, k) => (grid[c] = vals[k]));
+    } while (cells.length && !anyMove());
+  }
+
+  // Level 2+: tiles slide toward one side after each match.
+  function gravity() {
+    const mode = (level - 1) % 5; // 0 none, 1 down, 2 up, 3 left, 4 right
+    if (mode === 0) return;
+    const vertical = mode === 1 || mode === 2;
+    for (let k = 1; k <= (vertical ? COLS : ROWS); k++) {
+      const line: number[] = [];
+      for (let j = 1; j <= (vertical ? ROWS : COLS); j++) line.push(vertical ? idx(j, k) : idx(k, j));
+      if (mode === 1 || mode === 4) line.reverse();
+      const vals = line.map(i => grid[i]).filter(Boolean);
+      line.forEach((i, n) => (grid[i] = vals[n] ?? null));
+    }
+  }
+
+  function render() {
+    board.replaceChildren(
+      ...grid.map((v, i) => {
+        const [r, c] = rc(i);
+        const b = document.createElement("button");
+        b.type = "button";
+        if (!inner(r, c)) { b.className = "edge"; b.tabIndex = -1; b.setAttribute("aria-hidden", "true"); return b; }
+        if (!v) { b.className = "empty"; b.tabIndex = -1; return b; }
+        b.textContent = v;
+        b.setAttribute("aria-label", `Hàng ${r} cột ${c}`);
+        if (i === sel) b.classList.add("sel");
+        b.addEventListener("click", () => pick(i));
+        return b;
+      })
+    );
+  }
+
+  function drawPath(pts: number[]) {
+    const cell = (board.firstElementChild as HTMLElement).offsetWidth;
+    const xy = pts.map(i => { const [r, c] = rc(i); return `${c * cell + cell / 2},${r * cell + cell / 2}`; }).join(" ");
+    svg.innerHTML = `<polyline points="${xy}" />`;
+    setTimeout(() => (svg.innerHTML = ""), 280);
+  }
+
+  function updateHud() {
+    $("level").textContent = String(level);
+    $("score").textContent = String(score);
+    $("hints").textContent = String(hints);
+    $("time").textContent = String(timeLeft);
+    ($("timebar") as HTMLElement).style.width = `${(timeLeft / timeMax) * 100}%`;
+    if (score > best) {
+      best = score;
+      $("best").textContent = String(best);
+      try { localStorage.setItem("noithu9x", String(best)); } catch {}
+    }
+  }
+
+  function pick(i: number) {
+    if (busy || !grid[i]) return;
+    if (sel === null || sel === i) { sel = sel === i ? null : i; render(); return; }
+    const a = sel;
+    sel = null;
+    const path = grid[a] === grid[i] ? findPath(a, i) : null;
+    if (!path) { sel = i; render(); return; }
+    busy = true;
+    drawPath(path);
+    setTimeout(() => {
+      grid[a] = grid[i] = null;
+      score += 10;
+      gravity();
+      busy = false;
+      if (grid.every(v => !v)) return win();
+      if (!anyMove()) { shuffleTiles(); $("msg").textContent = "Hết đường nối, đã tự đảo bàn."; }
+      render();
+      updateHud();
+    }, 200);
+  }
+
+  function win() {
+    clearInterval(timer);
+    score += timeLeft * 2;
+    updateHud();
+    $("msg").textContent = `Qua màn ${level}! Thưởng ${timeLeft * 2} điểm thời gian 🎉`;
+    level++;
+    setTimeout(startLevel, 1500);
+  }
+
+  function lose() {
+    clearInterval(timer);
+    busy = true;
+    $("msg").textContent = `Hết giờ! Dừng ở màn ${level} với ${score} điểm. Bấm Chơi lại nha.`;
+  }
+
+  function startLevel() {
+    const types = Math.min(ANIMALS.length, 10 + level * 2);
+    const tiles: string[] = [];
+    for (let k = 0; tiles.length < ROWS * COLS; k++) tiles.push(ANIMALS[k % types], ANIMALS[k % types]);
+    grid = Array(R * C).fill(null);
+    let n = 0;
+    for (let r = 1; r <= ROWS; r++) for (let c = 1; c <= COLS; c++) grid[idx(r, c)] = tiles[n++];
+    shuffleTiles();
+    sel = null;
+    busy = false;
+    hints = 3;
+    timeMax = timeLeft = Math.max(120, 300 - (level - 1) * 30);
+    $("msg").textContent = level === 1 ? "Bấm hai ô giống nhau để nối." : `Màn ${level}: các ô sẽ trượt sau mỗi lần nối.`;
+    clearInterval(timer);
+    timer = window.setInterval(() => {
+      if (document.hidden || busy) return;
+      timeLeft--;
+      updateHud();
+      if (timeLeft <= 0) lose();
+    }, 1000);
+    render();
+    updateHud();
+  }
+
+  $("hint").addEventListener("click", () => {
+    if (busy || hints <= 0) return;
+    const m = anyMove();
+    if (!m) return;
+    hints--;
+    updateHud();
+    m.forEach(i => board.children[i].classList.add("hint"));
+    setTimeout(() => m.forEach(i => board.children[i]?.classList.remove("hint")), 1600);
+  });
+  $("shuffle").addEventListener("click", () => {
+    if (busy) return;
+    score = Math.max(0, score - 20);
+    shuffleTiles();
+    render();
+    updateHud();
+  });
+  $("restart").addEventListener("click", () => { level = 1; score = 0; startLevel(); });
+  startLevel();
+</script>

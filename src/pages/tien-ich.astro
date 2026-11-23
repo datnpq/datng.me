@@ -101,7 +101,38 @@ import config from "@/config";
           <p class="text-muted-foreground mt-1 text-xs">Bấm vào nick để copy.</p>
         </div>
       </section>
+
+      <!-- Xin xăm -->
+      <section class="win9x">
+        <div class="win9x-title">🎋 Xin xăm</div>
+        <div class="win9x-body text-center">
+          <p class="text-sm">Khấn thầm điều muốn hỏi, rồi lắc ống xăm.</p>
+          <button id="xam-btn" class="btn9x mt-2" type="button">Lắc ống xăm</button>
+          <div id="xam-out" class="mt-3 text-sm" aria-live="polite"></div>
+          <p class="text-muted-foreground mt-2 text-xs">Xăm vui do tui tự viết, đọc cho vui thôi nha.</p>
+        </div>
+      </section>
+
+      <!-- Bói Kiều -->
+      <section class="win9x">
+        <div class="win9x-title">📖 Bói Kiều</div>
+        <div class="win9x-body text-center">
+          <p class="text-sm">Nghĩ về điều muốn hỏi, rồi giở Truyện Kiều ra một trang bất kỳ.</p>
+          <button id="kieu-btn" class="btn9x mt-2" type="button">Giở sách</button>
+          <div id="kieu-out" class="mt-3 text-sm" aria-live="polite"></div>
+          <p class="text-muted-foreground mt-2 text-xs">Nguyên văn 3254 câu Truyện Kiều của Nguyễn Du, theo bản trên Wikisource.</p>
+        </div>
+      </section>
     </div>
+
+    <!-- Yahoo icons -->
+    <section class="win9x mt-4">
+      <div class="win9x-title">😆 Mã icon Yahoo! Messenger</div>
+      <div class="win9x-body">
+        <p class="text-sm">Hồi đó gõ mã là ra icon. Bấm một ô để copy mã.</p>
+        <ul id="ym-icons" class="mt-3 grid grid-cols-2 gap-1 text-sm sm:grid-cols-4"></ul>
+      </div>
+    </section>
 
     <!-- Caro -->
     <section class="win9x mt-4">
@@ -442,4 +473,102 @@ import config from "@/config";
   $("caro-new").addEventListener("click", newGame);
   save();
   newGame();
+
+  // ---- xin xăm (original verses)
+  const XAM: [string, string, string][] = [
+    ["Thượng thượng", "Trời quang mây tạnh đường xa,\nGieo hạt hôm trước nay đà trổ bông.", "Việc đang làm sắp ra kết quả. Cứ đều tay, đừng bỏ ngang."],
+    ["Thượng", "Gió đưa thuyền nhẹ qua sông,\nNgười xưa nhắn gửi, chờ mong có ngày.", "Sắp có tin vui từ người quen cũ."],
+    ["Trung", "Lưng chừng dốc núi mù sương,\nChậm chân một chút, con đường vẫn xuôi.", "Đừng vội. Chậm mà chắc."],
+    ["Hạ", "Mưa dầm ướt áo chiều nay,\nCất ô cho kỹ, mai này còn dùng.", "Dễ hao tiền vặt. Giữ ví cho kỹ."],
+    ["Thượng", "Cành mai trước ngõ đơm hoa,\nNgười thương ghé lại hiên nhà hôm qua.", "Tình duyên khởi sắc. Nhắn tin trước đi."],
+    ["Trung", "Đèn khuya một ngọn bên song,\nSách còn dang dở, việc còn chưa xong.", "Việc cũ chưa xong thì đừng ôm thêm việc mới."],
+    ["Thượng thượng", "Rằm trăng sáng tỏ đầu non,\nLộc vào như nước, việc tròn như trăng.", "Tài lộc tốt. Việc lớn nên làm."],
+    ["Hạ", "Gà kêu sai buổi canh ba,\nLời ai đồn đại chớ mà vội tin.", "Coi chừng tin đồn. Kiểm chứng rồi hãy nói."],
+    ["Trung", "Thuyền về bến cũ chiều hôm,\nBạn xưa còn đó, cơm thơm còn chờ.", "Nên về thăm nhà, hẹn lại bạn cũ."],
+    ["Thượng", "Đường quen chợt rẽ lối sang,\nBước qua cửa mới, gặp người tri âm.", "Có cơ hội mới, gặp người hiểu mình."],
+    ["Hạ", "Nắng trưa đổ lửa trên đầu,\nGiận lên nói vội, mai sau khó lành.", "Dễ cãi nhau. Uống ly nước rồi hãy nói."],
+    ["Trung", "Cây non mới nhú mầm xanh,\nTưới đều mỗi sáng, cây thành bóng râm.", "Thói quen nhỏ mỗi ngày sẽ thành chuyện lớn."],
+    ["Thượng", "Chim về làm tổ hiên nhà,\nBình an gõ cửa, chuyện xa hóa gần.", "Gia đạo yên ổn. Chuyện khó có người giúp."],
+    ["Hạ", "Đêm dài mất ngủ trông sao,\nLo xa chưa tới đã nao nao lòng.", "Đang lo hơi xa. Ngủ sớm đi, mai tính."],
+    ["Trung", "Chợ đông kẻ bán người mua,\nGiá nghe thì rẻ, chớ thua chữ tham.", "Mua bán, đầu tư cẩn thận. Hời quá là có chuyện."],
+    ["Thượng thượng", "Mây lành che mát đường xa,\nĐi đâu cũng gặp người ta giúp mình.", "Có quý nhân. Ra ngoài nhiều vào."],
+    ["Hạ", "Lửa con để mãi thành than,\nViệc nhỏ bỏ đó dở dang thành phiền.", "Chuyện nhỏ đang trì hoãn, làm ngay hôm nay."],
+    ["Trung", "Sông kia có lúc đục trong,\nLòng người cũng vậy, chờ trông có ngày.", "Mối quan hệ đang lạnh sẽ ấm lại. Đừng ép."],
+    ["Thượng", "Sáo diều vi vút đồng xa,\nƯớc mơ thuở nhỏ hóa ra gần kề.", "Điều mong lâu nay sắp có dịp thành."],
+    ["Trung", "Gánh nặng hai vai đường dài,\nChia bớt một nửa cho ai đỡ cùng.", "Đừng ôm hết việc. Nhờ người phụ một tay."],
+  ];
+  $("xam-btn").addEventListener("click", () => {
+    const out = $("xam-out");
+    out.textContent = "Lắc lắc lắc… 🎋";
+    setTimeout(() => {
+      const n = Math.floor(Math.random() * XAM.length);
+      const [grade, verse, meaning] = XAM[n];
+      out.replaceChildren();
+      const h = document.createElement("p");
+      h.className = "font-bold text-accent";
+      h.textContent = `Quẻ số ${n + 1} · ${grade}`;
+      const v = document.createElement("p");
+      v.className = "mt-2 italic whitespace-pre-line";
+      v.textContent = verse;
+      const m = document.createElement("p");
+      m.className = "mt-2";
+      m.textContent = `Lời giải: ${meaning}`;
+      out.append(h, v, m);
+    }, 700);
+  });
+
+  // ---- bói Kiều (full text loaded on first use)
+  let kieu: string[] | null = null;
+  $("kieu-btn").addEventListener("click", async () => {
+    const out = $("kieu-out");
+    out.textContent = "Đang giở sách…";
+    try {
+      if (!kieu) kieu = (await (await fetch("/data/kieu.txt")).text()).trim().split("\n");
+      const pair = Math.floor(Math.random() * Math.floor(kieu.length / 2));
+      const a = pair * 2;
+      out.replaceChildren();
+      const v = document.createElement("p");
+      v.className = "italic whitespace-pre-line text-base";
+      v.textContent = `${kieu[a]}\n${kieu[a + 1]}`;
+      const n = document.createElement("p");
+      n.className = "text-muted-foreground mt-1 text-xs";
+      n.textContent = `Câu ${a + 1}–${a + 2}`;
+      out.append(v, n);
+    } catch {
+      out.textContent = "Không mở được sách, thử lại nha.";
+    }
+  });
+
+  // ---- Yahoo! Messenger emoticon codes
+  const YM: [string, string, string][] = [
+    [":)", "🙂", "mỉm cười"], [":(", "🙁", "buồn"], [";)", "😉", "nháy mắt"], [":D", "😃", "cười toe"],
+    [";;)", "😏", "liếc mắt"], [">:D<", "🤗", "ôm chặt"], [":-/", "😕", "bối rối"], [":x", "😍", "yêu quá"],
+    [':">', "😊", "mắc cỡ"], [":P", "😛", "lè lưỡi"], [":-*", "😘", "hôn"], ["=((", "💔", "tan nát"],
+    [":-O", "😮", "ngạc nhiên"], ["X(", "😠", "giận"], [":>", "😌", "tự mãn"], ["B-)", "😎", "ngầu"],
+    [":-S", "😟", "lo lắng"], ["#:-S", "😥", "toát mồ hôi"], [">:)", "😈", "quỷ sứ"], [":((", "😭", "khóc"],
+    [":))", "😆", "cười to"], [":|", "😐", "thẳng mặt"], ["/:)", "🤨", "nhướng mày"], ["=))", "🤣", "lăn ra cười"],
+    ["O:-)", "😇", "thiên thần"], [":-B", "🤓", "mọt sách"], ["I-)", "😴", "buồn ngủ"], ["8-|", "🙄", "đảo mắt"],
+    [":-$", "🤐", "đừng nói ai"], ["[-(", "😒", "hứ"], ["@-)", "😵", "chóng mặt"], ["=D>", "👏", "vỗ tay"],
+    [":-SS", "😬", "cắn móng tay"], [":-h", "👋", "vẫy tay"], [":-c", "📞", "gọi điện"], ["~X(", "🤦", "bó tay"],
+    [":-bd", "👍", "tuyệt"], ["\\:D/", "💃", "nhảy múa"], ["^:)^", "🙇", "không dám đâu"], [":-w", "⏳", "đợi chút"],
+  ];
+  $("ym-icons").replaceChildren(
+    ...YM.map(([code, emoji, name]) => {
+      const li = document.createElement("li");
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "hover:border-accent flex w-full items-center gap-2 rounded border px-2 py-1 text-left";
+      const label = `${emoji} ${code} ${name}`;
+      b.textContent = label;
+      b.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(code);
+          b.textContent = `${emoji} Đã copy ${code}`;
+          setTimeout(() => (b.textContent = label), 1000);
+        } catch {}
+      });
+      li.appendChild(b);
+      return li;
+    })
+  );
 </script>

@@ -1,0 +1,212 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+
+const MOODS = ["😊 vui", "😢 buồn", "😍 đang yêu", "😴 buồn ngủ", "😤 bực", "🤔 suy tư", "🥳 phấn khích", "😌 bình yên"];
+---
+
+<Layout
+  title={`Giao lưu | ${config.site.title}`}
+  description="Chatbox, thăm dò ý kiến và nhật ký online cho khách ghé chơi, kiểu web cá nhân thời 2008."
+>
+  <Header />
+  <Breadcrumb />
+  <Main
+    pageTitle="~*~ Góc giao lưu ~*~"
+    pageDesc="Ghé chơi thì để lại vài dòng. Chatbox hiện liền, nhật ký thì tui đọc rồi duyệt mới hiện."
+  >
+    <p class="mt-2 text-sm">👥 Đang online: <b data-online>…</b></p>
+
+    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <!-- Chatbox -->
+      <section class="win9x sm:row-span-2">
+        <div class="win9x-title">💬 Chatbox</div>
+        <div class="win9x-body">
+          <ul id="chat-list" class="h-80 space-y-1 overflow-y-auto pr-1 text-sm break-words" aria-live="polite">
+            <li class="text-muted-foreground">Đang tải…</li>
+          </ul>
+          <form id="chat-form" class="mt-3 grid gap-2">
+            <input name="name" maxlength="30" placeholder="Nick của bạn" autocomplete="nickname" />
+            <div class="flex gap-2">
+              <input name="msg" maxlength="200" required placeholder="Nói gì đi…" autocomplete="off" />
+              <button class="btn9x flex-none" type="submit">Gửi</button>
+            </div>
+            <input name="website" tabindex="-1" autocomplete="off" class="!hidden" aria-hidden="true" />
+            <p id="chat-note" class="text-muted-foreground text-xs">Không gửi link. Mỗi 15 giây được gửi một tin.</p>
+          </form>
+        </div>
+      </section>
+
+      <!-- Poll -->
+      <section class="win9x">
+        <div class="win9x-title">📊 Thăm dò ý kiến</div>
+        <div class="win9x-body">
+          <p id="poll-q" class="font-semibold">…</p>
+          <form id="poll-form" class="mt-2 grid gap-1 text-sm"></form>
+          <p id="poll-note" class="text-muted-foreground mt-2 text-xs"></p>
+        </div>
+      </section>
+
+      <!-- Diary form -->
+      <section class="win9x">
+        <div class="win9x-title">📝 Viết nhật ký</div>
+        <div class="win9x-body">
+          <form id="diary-form" class="grid gap-2 text-sm">
+            <input name="name" maxlength="30" placeholder="Tên bạn" />
+            <input name="title" maxlength="80" required placeholder="Tiêu đề" />
+            <div class="grid grid-cols-2 gap-2">
+              <select name="mood" aria-label="Tâm trạng">
+                {MOODS.map(m => <option>{m}</option>)}
+              </select>
+              <input name="song" maxlength="80" placeholder="🎵 Đang nghe…" />
+            </div>
+            <textarea name="content" rows="4" maxlength="1500" required placeholder="Hôm nay thế nào?"></textarea>
+            <input name="website" tabindex="-1" autocomplete="off" class="!hidden" aria-hidden="true" />
+            <button class="btn9x" type="submit">Gửi nhật ký</button>
+            <p id="diary-note" class="text-muted-foreground text-xs">Tui đọc và duyệt rồi mới hiện lên trang.</p>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <!-- Diary entries -->
+    <section class="mt-6">
+      <h2 class="text-xl font-semibold">📔 Nhật ký online</h2>
+      <ul id="diary-list" class="mt-3 grid gap-3">
+        <li class="text-muted-foreground text-sm">Đang tải…</li>
+      </ul>
+    </section>
+  </Main>
+  <Footer />
+</Layout>
+
+<script>
+  const $ = (id: string) => document.getElementById(id)!;
+  const api = async (path: string, body?: unknown) => {
+    const res = await fetch(`/api/9x/${path}`, body ? { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) } : {});
+    return res.json().catch(() => ({ ok: false, error: "network" }));
+  };
+  const fmt = (ts: number) =>
+    new Intl.DateTimeFormat("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" }).format(ts);
+  const el = (tag: string, cls = "", text = "") => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text) e.textContent = text;
+    return e;
+  };
+  const ERR: Record<string, string> = {
+    too_fast: "Từ từ thôi, đợi chút rồi gửi tiếp nha.",
+    no_links: "Không được gửi link nha.",
+    too_short: "Viết dài thêm chút nữa nha.",
+    empty: "Chưa nhập gì hết.",
+    queue_full: "Hộp thư đầy rồi, quay lại sau nha.",
+    network: "Không kết nối được, thử lại sau.",
+  };
+  const NAME_KEY = "nick9x";
+  const savedNick = (() => { try { return localStorage.getItem(NAME_KEY) ?? ""; } catch { return ""; } })();
+  document.querySelectorAll<HTMLInputElement>('input[name="name"]').forEach(i => (i.value = savedNick));
+  const rememberNick = (n: string) => { try { if (n) localStorage.setItem(NAME_KEY, n); } catch {} };
+
+  // ---- chat
+  const chatList = $("chat-list");
+  const loadChat = async () => {
+    const r = await api("chat");
+    if (!r.ok) { chatList.replaceChildren(el("li", "text-muted-foreground", "Chatbox đang bảo trì.")); return; }
+    const atBottom = chatList.scrollHeight - chatList.scrollTop - chatList.clientHeight < 40;
+    chatList.replaceChildren(
+      ...(r.messages.length ? r.messages : [{ name: "datng.me", msg: "Chưa ai nói gì. Mở hàng đi!", ts: Date.now() }]).map(
+        (m: { name: string; msg: string; ts: number }) => {
+          const li = el("li");
+          li.append(el("b", "text-accent", m.name), document.createTextNode(": " + m.msg + " "), el("span", "text-muted-foreground text-xs", fmt(m.ts)));
+          return li;
+        }
+      )
+    );
+    if (atBottom) chatList.scrollTop = chatList.scrollHeight;
+  };
+  const chatForm = $("chat-form") as HTMLFormElement;
+  chatForm.addEventListener("submit", async e => {
+    e.preventDefault();
+    const f = new FormData(chatForm);
+    const name = String(f.get("name") ?? "").trim();
+    rememberNick(name);
+    const r = await api("chat", { name, msg: f.get("msg"), website: f.get("website") });
+    $("chat-note").textContent = r.ok ? "Đã gửi ✓" : ERR[r.error] ?? "Gửi không được.";
+    if (r.ok) { (chatForm.elements.namedItem("msg") as HTMLInputElement).value = ""; await loadChat(); chatList.scrollTop = chatList.scrollHeight; }
+  });
+  loadChat().then(() => (chatList.scrollTop = chatList.scrollHeight));
+  setInterval(() => { if (!document.hidden) loadChat(); }, 15000);
+
+  // ---- poll
+  type Poll = { question: string; options: string[]; counts: number[]; voted: number | null };
+  const renderPoll = (p: Poll) => {
+    $("poll-q").textContent = p.question;
+    const total = p.counts.reduce((a, b) => a + b, 0);
+    const form = $("poll-form");
+    if (p.voted === null) {
+      form.replaceChildren(
+        ...p.options.map((o, i) => {
+          const b = el("button", "btn9x text-left", o) as HTMLButtonElement;
+          b.type = "button";
+          b.addEventListener("click", async () => {
+            const r = await api("poll", { opt: i });
+            if (r.ok) renderPoll(r);
+          });
+          return b;
+        })
+      );
+      $("poll-note").textContent = "Bấm để chọn. Mỗi người một phiếu.";
+    } else {
+      form.replaceChildren(
+        ...p.options.map((o, i) => {
+          const pct = total ? Math.round((p.counts[i] / total) * 100) : 0;
+          const row = el("div");
+          row.append(el("div", "flex justify-between gap-2", ""), el("div", "h-2 border"));
+          row.children[0].append(el("span", i === p.voted ? "font-bold" : "", (i === p.voted ? "✔ " : "") + o), el("span", "", `${pct}% (${p.counts[i]})`));
+          const bar = el("div", "bg-accent h-full");
+          bar.style.width = pct + "%";
+          row.children[1].append(bar);
+          return row;
+        })
+      );
+      $("poll-note").textContent = `${total} người đã bình chọn. Cảm ơn bạn!`;
+    }
+  };
+  api("poll").then(r => (r.ok ? renderPoll(r) : ($("poll-q").textContent = "Thăm dò đang bảo trì.")));
+
+  // ---- diary
+  const loadDiary = async () => {
+    const r = await api("diary");
+    const list = $("diary-list");
+    if (!r.ok) { list.replaceChildren(el("li", "text-muted-foreground text-sm", "Nhật ký đang bảo trì.")); return; }
+    if (!r.entries.length) { list.replaceChildren(el("li", "text-muted-foreground text-sm", "Chưa có trang nhật ký nào. Bạn viết trang đầu tiên đi!")); return; }
+    list.replaceChildren(
+      ...r.entries.map((d: { name: string; title: string; mood: string; song: string; content: string; ts: number }) => {
+        const li = el("li", "win9x");
+        const title = el("div", "win9x-title", "");
+        title.append(document.createTextNode(d.title));
+        const body = el("div", "win9x-body text-sm");
+        body.append(
+          el("p", "text-muted-foreground text-xs", `${d.name} · ${fmt(d.ts)}${d.mood ? " · " + d.mood : ""}${d.song ? " · 🎵 " + d.song : ""}`),
+          el("p", "mt-2 whitespace-pre-line", d.content)
+        );
+        li.append(title, body);
+        return li;
+      })
+    );
+  };
+  loadDiary();
+  const diaryForm = $("diary-form") as HTMLFormElement;
+  diaryForm.addEventListener("submit", async e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(diaryForm));
+    rememberNick(String(data.name ?? "").trim());
+    const r = await api("diary", data);
+    $("diary-note").textContent = r.ok ? "Đã gửi! Tui duyệt xong là trang nhật ký của bạn hiện lên 💌" : ERR[r.error] ?? "Gửi không được.";
+    if (r.ok) { (diaryForm.elements.namedItem("title") as HTMLInputElement).value = ""; (diaryForm.elements.namedItem("content") as HTMLTextAreaElement).value = ""; }
+  });
+</script>

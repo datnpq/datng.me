@@ -1,4 +1,5 @@
 ---
+import OnlineCount from "./OnlineCount.astro";
 import type { HTMLAttributes } from "astro/types";
 import Socials from "./Socials.astro";
 import { useTranslations } from "@/i18n";
@@ -49,6 +50,16 @@ const currentYear = new Date().getFullYear();
         >Gửi thiệp</a
       >
       <a
+        href="/giao-luu/"
+        class="hover:text-accent underline decoration-dashed underline-offset-4"
+        >Giao lưu</a
+      >
+      <a
+        href="/game/noi-thu/"
+        class="hover:text-accent underline decoration-dashed underline-offset-4"
+        >Game</a
+      >
+      <a
         href="/rss.xml"
         class="hover:text-accent underline decoration-dashed underline-offset-4"
         >RSS</a
@@ -58,6 +69,7 @@ const currentYear = new Date().getFullYear();
       class="my-2 flex flex-col items-center gap-1 whitespace-nowrap sm:flex-row sm:gap-3"
     >
       <VisitorCounter />
+      <OnlineCount />
       <span>{t.footer.copyright} &#169; {currentYear}</span>
       <span class="hidden sm:inline">&nbsp;|&nbsp;</span>
       <span>{t.footer.allRightsReserved}</span>

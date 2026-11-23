@@ -28,7 +28,8 @@ export default defineConfig({
     mdx(),
     sitemap({
       filter: page =>
-        config.features?.showArchives !== false || !/\/archives\/?$/.test(page),
+        !/\/quan-tri\/?$/.test(page) &&
+        (config.features?.showArchives !== false || !/\/archives\/?$/.test(page)),
     }),
     inlineTocDeprecation(),
   ],

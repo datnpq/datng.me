@@ -3,14 +3,20 @@
  * - POST /api/subscribe  → add contact to Resend (newsletter)
  * - GET/POST /api/views/<slug> → read / increment a post's view counter (KV)
  * - GET/POST /api/visits → site-wide visitor counter (KV)
+ * - /api/9x/*           → chatbox, poll, visitor diary, online count (Durable Object)
  * - everything else      → static assets (Astro build in ./dist)
  */
+import { NineX } from "./ninex";
+export { NineX };
 export interface Env {
   ASSETS: Fetcher;
   VIEWS: KVNamespace;
   RESEND_API_KEY: string; // wrangler secret put RESEND_API_KEY
   RESEND_SEGMENT_ID?: string; // optional: put subscribers in a segment
   SITE_ORIGIN: string;
+  NINEX: DurableObjectNamespace<NineX>;
+  ADMIN_TOKEN?: string; // set in the Cloudflare dashboard; enables /quan-tri/
+  HASH_SALT?: string; // optional: salt for hashing visitor IPs
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -125,12 +131,87 @@ async function visits(request: Request, env: Env): Promise<Response> {
   return json({ ok: true, visits: next }, 200, headers);
 }
 
+// ---------- Góc giao lưu 9x ----------
+// Strip control and bidi characters; keep newlines only where asked.
+const CTRL_RE = /[\u0000-\u0009\u000b-\u001f\u007f​-‏‪-‮⁦-⁩]/g;
+const clean = (v: unknown, max: number, multiline = false) => {
+  let t = String(v ?? "").normalize("NFC").replace(CTRL_RE, "");
+  if (!multiline) t = t.replace(/\n/g, " ");
+  return t.replace(/\n{3,}/g, "\n\n").trim().slice(0, max);
+};
+const LINK_RE = /(https?:\/\/|www\.|\.(com|net|org|vn|xyz|io|me)\b)/i;
+
+async function ipHash(request: Request, env: Env) {
+  const ip = request.headers.get("cf-connecting-ip") ?? "local";
+  const data = new TextEncoder().encode((env.HASH_SALT ?? "datng.me-9x") + ip);
+  const buf = await crypto.subtle.digest("SHA-256", data);
+  return [...new Uint8Array(buf).slice(0, 12)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function isAdmin(request: Request, env: Env) {
+  const token = env.ADMIN_TOKEN ?? "";
+  const got = (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+  if (token.length < 16 || got.length !== token.length) return false;
+  let diff = 0;
+  for (let i = 0; i < token.length; i++) diff |= token.charCodeAt(i) ^ got.charCodeAt(i);
+  return diff === 0;
+}
+
+async function ninex(request: Request, env: Env, path: string): Promise<Response> {
+  const noStore = { "cache-control": "no-store" };
+  const post = request.method === "POST";
+  if (post && !sameSite(request, env)) return json({ ok: false, error: "forbidden" }, 403);
+  if (!post && request.method !== "GET") return json({ ok: false, error: "method" }, 405);
+  const body = post ? ((await request.json().catch(() => ({}))) as Record<string, unknown>) : {};
+  if (post && body.website) return json({ ok: true }); // honeypot: bots fill it
+  const stub = env.NINEX.get(env.NINEX.idFromName("main"));
+  const ip = await ipHash(request, env);
+
+  switch (path) {
+    case "online":
+      return json({ ok: true, online: await stub.ping(post ? clean(body.id, 40) : "") }, 200, noStore);
+    case "chat": {
+      if (!post) return json({ ok: true, messages: await stub.chatList() }, 200, noStore);
+      const name = clean(body.name, 30) || "Khách";
+      const msg = clean(body.msg, 200);
+      if (!msg) return json({ ok: false, error: "empty" }, 400);
+      if (LINK_RE.test(msg) || LINK_RE.test(name)) return json({ ok: false, error: "no_links" }, 400);
+      const r = await stub.chatPost(ip, name, msg);
+      return json(r, r.ok ? 200 : 429, noStore);
+    }
+    case "poll":
+      if (!post) return json({ ok: true, ...(await stub.poll(ip)) }, 200, noStore);
+      return json(await stub.vote(ip, Number(body.opt)), 200, noStore);
+    case "diary": {
+      if (!post) return json({ ok: true, entries: await stub.diaryList() }, 200, noStore);
+      const entry = {
+        name: clean(body.name, 30) || "Khách",
+        title: clean(body.title, 80),
+        mood: clean(body.mood, 30),
+        song: clean(body.song, 80),
+        content: clean(body.content, 1500, true),
+      };
+      if (!entry.title || entry.content.length < 10) return json({ ok: false, error: "too_short" }, 400);
+      const r = await stub.diaryPost(ip, entry);
+      return json(r, r.ok ? 200 : 429, noStore);
+    }
+    case "admin": {
+      if (!env.ADMIN_TOKEN) return json({ ok: false, error: "not_configured" }, 503);
+      if (!isAdmin(request, env)) return json({ ok: false, error: "unauthorized" }, 401);
+      if (!post) return json({ ok: true, ...(await stub.adminList()) }, 200, noStore);
+      return json(await stub.adminAction(String(body.kind), Number(body.id), String(body.action)), 200, noStore);
+    }
+  }
+  return json({ ok: false, error: "not_found" }, 404);
+}
+
 export default {
   async fetch(request, env): Promise<Response> {
     const url = new URL(request.url);
     const viewsMatch = url.pathname.match(/^\/api\/views\/([^/]+)\/?$/);
     if (viewsMatch) return views(request, env, decodeURIComponent(viewsMatch[1]));
     if (url.pathname === "/api/visits") return visits(request, env);
+    if (url.pathname.startsWith("/api/9x/")) return ninex(request, env, url.pathname.slice(8));
     if (url.pathname === "/api/subscribe") {
       if (request.method !== "POST") return json({ ok: false, error: "method" }, 405);
       return subscribe(request, env);

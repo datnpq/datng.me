@@ -1,0 +1,37 @@
+---
+/** "Đang online: N" — pings /api/9x/online once a minute while the tab is open. */
+---
+
+<span data-online-wrap hidden>👥 <b data-online>1</b> đang online</span>
+
+<script>
+  let id = "";
+  try {
+    id = sessionStorage.getItem("online9x") ?? "";
+    if (!id) {
+      id = crypto.randomUUID();
+      sessionStorage.setItem("online9x", id);
+    }
+  } catch {
+    id = crypto.randomUUID();
+  }
+  const ping = async () => {
+    if (document.hidden) return;
+    try {
+      const res = await fetch("/api/9x/online", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const r = await res.json();
+      if (!r.ok) return;
+      document.querySelectorAll("[data-online]").forEach(e => (e.textContent = String(r.online)));
+      document.querySelectorAll<HTMLElement>("[data-online-wrap]").forEach(e => (e.hidden = false));
+    } catch {
+      /* offline or API missing (astro dev) */
+    }
+  };
+  ping();
+  setInterval(ping, 60_000);
+  document.addEventListener("visibilitychange", () => !document.hidden && ping());
+</script>
